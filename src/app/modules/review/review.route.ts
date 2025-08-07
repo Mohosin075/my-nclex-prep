@@ -7,9 +7,9 @@ import { ReviewValidations } from './review.validation';
 
 const router = express.Router();
 
-router.post('/',auth(USER_ROLES.DRIVER,USER_ROLES.COMPANY,USER_ROLES.ADMIN, USER_ROLES.MECHANIC, USER_ROLES.COOK, USER_ROLES.FUEL_PROVIDER),validateRequest(ReviewValidations.create), ReviewController.createReview);
-router.get('/:type',auth(USER_ROLES.DRIVER,USER_ROLES.COMPANY,USER_ROLES.ADMIN, USER_ROLES.MECHANIC, USER_ROLES.COOK, USER_ROLES.FUEL_PROVIDER), ReviewController.getAllReviews);
-router.patch('/:id',auth(USER_ROLES.DRIVER,USER_ROLES.COMPANY,USER_ROLES.ADMIN, USER_ROLES.MECHANIC, USER_ROLES.COOK, USER_ROLES.FUEL_PROVIDER),validateRequest(ReviewValidations.update), ReviewController.updateReview);
-router.delete('/:id',auth(USER_ROLES.DRIVER,USER_ROLES.COMPANY,USER_ROLES.ADMIN, USER_ROLES.MECHANIC, USER_ROLES.COOK, USER_ROLES.FUEL_PROVIDER), ReviewController.deleteReview);
+router.post('/',auth(USER_ROLES.USER,USER_ROLES.GUEST,USER_ROLES.ADMIN, USER_ROLES.CUSTOMER, USER_ROLES.ADMIN),validateRequest(ReviewValidations.create), ReviewController.createReview);
+router.get('/:type',auth(USER_ROLES.USER,USER_ROLES.GUEST,USER_ROLES.ADMIN, USER_ROLES.CUSTOMER, USER_ROLES.ADMIN), ReviewController.getAllReviews);
+router.patch('/:id',auth(USER_ROLES.USER,USER_ROLES.GUEST,USER_ROLES.ADMIN, USER_ROLES.CUSTOMER, USER_ROLES.ADMIN),validateRequest(ReviewValidations.update), ReviewController.updateReview);
+router.delete('/:id',auth(USER_ROLES.USER,USER_ROLES.GUEST,USER_ROLES.ADMIN, USER_ROLES.CUSTOMER, USER_ROLES.ADMIN), ReviewController.deleteReview);
 
 export const ReviewRoutes = router;
