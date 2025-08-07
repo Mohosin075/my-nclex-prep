@@ -11,6 +11,8 @@ const auth =
     try {
       const tokenWithBearer = req.headers.authorization
 
+      console.log('hit')
+
       if (!tokenWithBearer) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Token not found!')
       }
@@ -69,12 +71,16 @@ export const tempAuth =
       if (tokenWithBearer && tokenWithBearer.startsWith('Bearer')) {
         const token = tokenWithBearer.split(' ')[1]
 
+        console.log({ token })
+
         try {
           // Verify token
           const verifyUser = jwtHelper.verifyToken(
             token,
             config.jwt.temp_jwt_secret as Secret,
           )
+
+          console.log({ verifyUser })
 
           // Set user to header
           req.user = verifyUser

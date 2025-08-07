@@ -14,7 +14,8 @@ import { AuthCommonServices, authResponse } from '../common'
 import { jwtHelper } from '../../../../helpers/jwtHelper'
 import { JwtPayload } from 'jsonwebtoken'
 import { IUser } from '../../user/user.interface'
-import { emailQueue } from '../../../../helpers/bull-mq-producer'
+import { emailHelper } from '../../../../helpers/emailHelper'
+// import { emailQueue } from '../../../../helpers/bull-mq-producer'
 
 
 const createUser = async (payload: IUser) => {
@@ -51,6 +52,8 @@ const createUser = async (payload: IUser) => {
   })
 
 
+  await emailHelper.sendEmail(createAccount)
+
   const user = await User.create({
     ...payload,
     password: payload.password,
@@ -60,7 +63,7 @@ const createUser = async (payload: IUser) => {
   if(!user){
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create user.')
   }
-  emailQueue.add('emails', createAccount)
+  // emailQueue.add('emails', createAccount)
 
   return "Account created successfully."
 }
@@ -179,7 +182,7 @@ const forgetPassword = async (email?: string, phone?: string) => {
       email: isUserExist.email as string,
       otp,
     })
-    emailQueue.add('emails', forgetPasswordEmailTemplate)
+    // emailQueue.add('emails', forgetPasswordEmailTemplate)
   }
 
   return "OTP sent successfully."
@@ -412,7 +415,7 @@ const resendOtpToPhoneOrEmail = async (
       otp,
       type:authType,
     })
-    emailQueue.add('emails', forgetPasswordEmailTemplate)
+    // emailQueue.add('emails', forgetPasswordEmailTemplate)
 
     await User.findByIdAndUpdate(
       isUserExist._id,
@@ -474,6 +477,7 @@ const deleteAccount = async (user: JwtPayload, password:string) => {
 
 const resendOtp = async (email:string, authType:'createAccount' | 'resetPassword') => {
 
+  console.log({email, authType})
   const isUserExist = await User.findOne({
     email: email.toLowerCase().trim(),
     status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
@@ -518,7 +522,7 @@ const resendOtp = async (email:string, authType:'createAccount' | 'resetPassword
       otp,
       type: authType,
     })
-    emailQueue.add('emails', forgetPasswordEmailTemplate)
+    // emailQueue.add('emails', forgetPasswordEmailTemplate)
   }
 
   

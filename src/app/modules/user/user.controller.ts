@@ -11,7 +11,7 @@ import { UserServices } from './user.service'
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
   const { image, ...userData } = req.body
 
-  userData.profile = image[0]
+  image && (userData.profile = image[0])
   const result = await UserServices.updateProfile(req.user!, userData)
   sendResponse<String>(res, {
     statusCode: StatusCodes.OK,

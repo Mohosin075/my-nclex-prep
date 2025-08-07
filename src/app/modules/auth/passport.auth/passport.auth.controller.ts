@@ -11,6 +11,8 @@ const login = catchAsync(async (req: Request, res: Response) => {
   const user = req.user
   const { deviceToken, password } = req.body
 
+  console.log({deviceToken, password})
+
   const result = await AuthCommonServices.handleLoginLogic(
     { deviceToken: deviceToken, password: password },
     user as IUser,
