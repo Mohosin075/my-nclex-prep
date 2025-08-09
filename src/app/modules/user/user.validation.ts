@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { USER_ROLES } from '../../../enum/user'
+import { USER_ROLES, USER_STATUS } from '../../../enum/user'
 import { profile } from 'console'
 
 const createUserZodSchema = z.object({
@@ -10,14 +10,9 @@ const createUserZodSchema = z.object({
     phone: z.string({ required_error: 'Phone is required' }).optional(),
     address: z.string().optional(),
     role: z.enum(
-      [
-        USER_ROLES.ADMIN,
-        USER_ROLES.USER,
-        USER_ROLES.GUEST,
-        USER_ROLES.CUSTOMER,
-      ],
+      [ USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT, USER_ROLES.GUEST ],
       {
-        message: 'Role must be one of admin, user, guest',
+        message: 'Role must be one of admin, teacher, student, guest',
       },
     ),
   }),
@@ -30,6 +25,15 @@ const updateUserZodSchema = z.object({
     address: z.string().optional(),
     image: z.array(z.string()).optional(),
   }),
-})
+});
 
-export const UserValidations = { createUserZodSchema, updateUserZodSchema }
+const updateUserStatusZodSchema = z.object({
+  body: z.object({
+    status: z.enum([USER_STATUS.ACTIVE, USER_STATUS.INACTIVE, USER_STATUS.DELETED], {
+      required_error: 'Status is required',
+      invalid_type_error: 'Status must be a valid enum value',
+    }),
+  }),
+});
+
+export const UserValidations = { createUserZodSchema, updateUserZodSchema , updateUserStatusZodSchema }

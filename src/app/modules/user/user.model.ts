@@ -36,7 +36,7 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     role: {
       type: String,
-      default: USER_ROLES.USER,
+      default: USER_ROLES.STUDENT,
     },
     address: {
       type: String,

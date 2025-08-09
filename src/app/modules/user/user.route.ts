@@ -14,14 +14,23 @@ const router = express.Router()
 router.patch(
   '/profile',
   auth(
-    USER_ROLES.CUSTOMER,
     USER_ROLES.ADMIN,
-    USER_ROLES.USER,
+    USER_ROLES.TEACHER,
+    USER_ROLES.STUDENT,
     USER_ROLES.GUEST,
   ),
   fileAndBodyProcessorUsingDiskStorage(),
   validateRequest(UserValidations.updateUserZodSchema),
   UserController.updateProfile,
 )
+
+router.route('/')
+.get(auth(USER_ROLES.ADMIN), UserController.getAllUsers)
+
+
+router.route('/:userId')
+.get(auth(USER_ROLES.ADMIN), UserController.getUserById)
+.delete(auth(USER_ROLES.ADMIN), UserController.deleteUser)
+.patch(auth(USER_ROLES.ADMIN), validateRequest(UserValidations.updateUserStatusZodSchema), UserController.updateUserStatus)
 
 export const UserRoutes = router
