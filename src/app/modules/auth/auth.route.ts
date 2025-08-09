@@ -64,9 +64,9 @@ router.post(
   '/resend-otp',
   tempAuth(
     USER_ROLES.ADMIN,
-    USER_ROLES.USER,
+    USER_ROLES.STUDENT,
     USER_ROLES.GUEST,
-    USER_ROLES.CUSTOMER,
+    USER_ROLES.TEACHER,
   ),
   validateRequest(AuthValidations.resendOtpZodSchema),
   CustomAuthController.resendOtp,
@@ -74,14 +74,14 @@ router.post(
 
 router.post(
   '/change-password',
-  auth(USER_ROLES.ADMIN, USER_ROLES.USER, USER_ROLES.GUEST),
+  auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT, USER_ROLES.GUEST),
   validateRequest(AuthValidations.changePasswordZodSchema),
   CustomAuthController.changePassword,
 )
 
 router.delete(
   '/delete-account',
-  auth(USER_ROLES.ADMIN, USER_ROLES.USER, USER_ROLES.GUEST),
+  auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT, USER_ROLES.GUEST),
   validateRequest(AuthValidations.deleteAccount),
   CustomAuthController.deleteAccount,
 )

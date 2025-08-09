@@ -19,7 +19,7 @@ const userSchema = new Schema<IUser, UserModel>(
     },
     status: {
       type: String,
-      enum: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED, USER_STATUS.DELETED],
+      enum: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE, USER_STATUS.DELETED],
       default: USER_STATUS.ACTIVE,
     },
     verified: {
@@ -39,7 +39,22 @@ const userSchema = new Schema<IUser, UserModel>(
       default: USER_ROLES.STUDENT,
     },
     address: {
-      type: String,
+      city : {
+        type: String,
+      },
+      permanentAddress: {
+        type: String,
+      },
+      presentAddress: {
+        type: String,
+      },
+      country: {
+        type: String,
+      },
+      postalCode: {
+        type: String,
+      },
+
     },
     location: {
       type: {
@@ -119,7 +134,7 @@ userSchema.pre<IUser>('save', async function (next) {
   //find the user by email
   const isExist = await User.findOne({
     email: this.email,
-    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
+    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE] },
   })
   if (isExist) {
     throw new ApiError(

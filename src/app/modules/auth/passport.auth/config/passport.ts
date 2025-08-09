@@ -20,7 +20,7 @@ passport.use(
       try {
         const isUserExist = await User.findOne({
           email,
-          status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
+          status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE] },
         })
           .select('+password +authentication')
           .lean()
@@ -52,7 +52,7 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       req.body.profile = profile
-      req.body.role = USER_ROLES.CUSTOMER
+      req.body.role = USER_ROLES.STUDENT
 
       try {
         return done(null, req.body)

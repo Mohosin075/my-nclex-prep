@@ -1,28 +1,35 @@
 import { z } from 'zod'
 import { USER_ROLES, USER_STATUS } from '../../../enum/user'
-import { profile } from 'console'
+
+const addressSchema = z.object({
+  city: z.string().optional(),
+  permanentAddress: z.string().optional(),
+  presentAddress: z.string().optional(),
+  country: z.string().optional(),
+  postalCode: z.string().optional(),
+});
 
 const createUserZodSchema = z.object({
   body: z.object({
     email: z.string({ required_error: 'Email is required' }).email(),
     password: z.string({ required_error: 'Password is required' }).min(6),
-    name: z.string({ required_error: 'Name is required' }).optional(),
-    phone: z.string({ required_error: 'Phone is required' }).optional(),
-    address: z.string().optional(),
+    name: z.string().optional(),
+    phone: z.string().optional(),
+    address: addressSchema.optional(),
     role: z.enum(
-      [ USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT, USER_ROLES.GUEST ],
+      [USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT, USER_ROLES.GUEST],
       {
         message: 'Role must be one of admin, teacher, student, guest',
-      },
+      }
     ),
   }),
-})
+});
 
 const updateUserZodSchema = z.object({
   body: z.object({
     name: z.string().optional(),
     phone: z.string().optional(),
-    address: z.string().optional(),
+    address: addressSchema.optional(),
     image: z.array(z.string()).optional(),
   }),
 });

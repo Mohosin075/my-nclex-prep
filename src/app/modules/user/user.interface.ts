@@ -12,6 +12,14 @@ type IAuthentication = {
   authType?: 'createAccount' | 'resetPassword'
 }
 
+type IAddress = {
+  city?: string
+  postalCode?: string
+  country?: string
+  permanentAddress?: string
+  presentAddress?: string
+}
+
 
 export type Point = {
   type: 'Point'
@@ -26,7 +34,7 @@ export type IUser = {
   phone?: string
   status: string
   verified: boolean
-  address?: string
+  address?: IAddress
   location: Point
   password: string
   role: string
