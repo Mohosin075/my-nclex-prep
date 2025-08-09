@@ -54,3 +54,10 @@ export const FaqValidations = {
     }),
   }),
 }
+
+
+export const updatePublicZodSchema = z.object({
+  body: z.object({
+    content: z.string(),
+  }),
+})

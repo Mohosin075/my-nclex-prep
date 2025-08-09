@@ -31,7 +31,8 @@ const createPublic = async (payload: IPublic) => {
     // redisClient.del(payload.type === 'privacy-policy' ? `public:${RedisKeys.PRIVACY_POLICY}` : `public:${RedisKeys.TERMS_AND_CONDITION}`)
     // redisClient.setex(payload.type === 'privacy-policy' ? `public:${RedisKeys.PRIVACY_POLICY}` : `public:${RedisKeys.TERMS_AND_CONDITION}`, 60 * 60 * 24, JSON.stringify(isExist))
   } else {
-    const result = await Public.create(payload)
+    const result = await Public.create(payload);
+
     if (!result)
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Public')
     //store the result in redis
@@ -91,6 +92,8 @@ const createContact = async (payload: IContact) => {
       `,
     }
 
+    await emailHelper.sendEmail(emailData)
+
     // emailQueue.add('emails', emailData)
 
     // Send confirmation email to the user
@@ -106,6 +109,8 @@ const createContact = async (payload: IContact) => {
         <p>Best regards,<br>The Healthcare and Financial Consultants Team</p>
       `,
     }
+
+    await emailHelper.sendEmail(userEmailData)
 
     // emailQueue.add('emails', userEmailData)
 
@@ -161,6 +166,29 @@ const deleteFaq = async (id: string) => {
   return result
 }
 
+
+const updatePublic = async (id: string, payload: Partial<IPublic>) => {
+  const data = await Public.findById(id);
+
+  if (!data) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Public document not found');
+  }
+
+  // Filter payload to only allow 'content' field update
+  const updateData = {
+    content: payload.content,
+  };
+
+  const result = await Public.findByIdAndUpdate(
+    id,
+    { $set: updateData },
+    { new: true }
+  );
+
+  return result;
+};
+
+
 export const PublicServices = {
   createPublic,
   getAllPublics,
@@ -171,4 +199,5 @@ export const PublicServices = {
   getSingleFaq,
   updateFaq,
   deleteFaq,
+  updatePublic,
 }

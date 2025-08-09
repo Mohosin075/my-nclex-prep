@@ -112,6 +112,20 @@ const deleteFaq = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+
+const updatePublic = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const publicData = req.body
+  const result = await PublicServices.updatePublic(id, publicData)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: `${publicData?.type} updated successfully`,
+    data: result,
+  })
+})
+
 export const PublicController = {
   createPublic,
   getAllPublics,
@@ -122,4 +136,5 @@ export const PublicController = {
   getSingleFaq,
   getAllFaqs,
   deleteFaq,
+  updatePublic
 }
