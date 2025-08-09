@@ -182,6 +182,10 @@ const forgetPassword = async (email?: string, phone?: string) => {
       email: isUserExist.email as string,
       otp,
     })
+
+
+    await emailHelper.sendEmail(forgetPasswordEmailTemplate)
+
     // emailQueue.add('emails', forgetPasswordEmailTemplate)
   }
 
@@ -299,6 +303,9 @@ const verifyAccount = async (email:string, onetimeCode: string):Promise<IAuthRes
     )
 
     const tokens = AuthHelper.createToken(isUserExist._id, isUserExist.role, isUserExist.name, isUserExist.email )
+
+    console.log({tokens})
+
    return authResponse(StatusCodes.OK, `Welcome ${isUserExist.name} to our platform.`, isUserExist.role, tokens.accessToken, tokens.refreshToken)
   }else{
 

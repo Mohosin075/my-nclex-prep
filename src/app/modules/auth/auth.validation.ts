@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { optional, z } from 'zod'
 import { USER_ROLES } from '../../../enum/user'
 
 const verifyEmailOrPhoneOtpZodSchema = z.object({
@@ -69,7 +69,7 @@ const verifyAccountZodSchema = z.object({
   body: z.object({
     email: z
       .string()
-        .refine(value => !value || /^\S+@\S+\.\S+$/.test(value), {
+      .refine(value => !value || /^\S+@\S+\.\S+$/.test(value), {
         message: 'Invalid email format',
       }),
     phone: z
