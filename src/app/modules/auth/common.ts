@@ -61,7 +61,7 @@ const handleLoginLogic = async (payload: ILoginData, isUserExist: IUser):Promise
     )
   }
 
-  if (status === USER_STATUS.RESTRICTED) {
+  if (status === USER_STATUS.INACTIVE) {
     if (restrictionLeftAt && new Date() < restrictionLeftAt) {
       const remainingMinutes = Math.ceil(
         (restrictionLeftAt.getTime() - Date.now()) / 60000,
@@ -90,7 +90,7 @@ const handleLoginLogic = async (payload: ILoginData, isUserExist: IUser):Promise
     isUserExist.authentication.wrongLoginAttempts = wrongLoginAttempts + 1
 
     if (isUserExist.authentication.wrongLoginAttempts >= 5) {
-      isUserExist.status = USER_STATUS.RESTRICTED
+      isUserExist.status = USER_STATUS.INACTIVE
       isUserExist.authentication.restrictionLeftAt = new Date(
         Date.now() + 10 * 60 * 1000,
       ) // restriction for 10 minutes

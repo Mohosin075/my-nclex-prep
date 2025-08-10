@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express, { Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
+import path from 'path';
 
 import router from './routes'
 import { Morgan } from './shared/morgan'
@@ -26,6 +27,8 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 //file retrieve
 app.use(express.static('uploads'))
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 //router
 app.use('/api/v1', router)

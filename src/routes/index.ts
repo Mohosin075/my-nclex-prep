@@ -5,6 +5,7 @@ import express, { Router } from 'express'
 import { NotificationRoutes } from '../app/modules/notifications/notifications.route'
 import { PublicRoutes } from '../app/modules/public/public.route'
 import { SupportRoutes } from '../app/modules/support/support.route'
+import { OnboardingscreenRoutes } from '../app/modules/onboardingscreen/onboardingscreen.route'
 
 const router = express.Router()
 
@@ -17,7 +18,8 @@ const apiRoutes: { path: string; route: Router }[] = [
 
   { path: '/public', route: PublicRoutes },
 
-  { path: '/support', route: SupportRoutes }]
+  { path: '/support', route: SupportRoutes },
+  { path: '/onboardingscreen', route: OnboardingscreenRoutes }]
 
 apiRoutes.forEach(route => {
   router.use(route.path, route.route)

@@ -76,7 +76,7 @@ const customLogin = async (payload: ILoginData):Promise<IAuthResponse> => {
 
   const isUserExist = await User.findOne({
     ...query,
-    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
+    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE] },
   })
     .select('+password +authentication')
     .lean()
@@ -138,7 +138,7 @@ const forgetPassword = async (email?: string, phone?: string) => {
   const query = email ? { email: email.toLocaleLowerCase().trim() } : { phone: phone }
   const isUserExist = await User.findOne({
     ...query,
-    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
+    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE] },
   })
 
   if (!isUserExist) {
@@ -197,7 +197,7 @@ const resetPassword = async (resetToken: string, payload: IResetPassword) => {
   if (newPassword !== confirmPassword) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Passwords do not match')
   }
-
+  console.log({ newPassword, confirmPassword })
   const isTokenExist = await Token.findOne({ token: resetToken }).lean()
   
   if (!isTokenExist) {
@@ -261,6 +261,7 @@ const resetPassword = async (resetToken: string, payload: IResetPassword) => {
 }
 
 const verifyAccount = async (email:string, onetimeCode: string):Promise<IAuthResponse> => {
+
   //verify fo new user
   if (!onetimeCode) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'OTP is required.')
@@ -324,9 +325,10 @@ const verifyAccount = async (email:string, onetimeCode: string):Promise<IAuthRes
     if(!token){
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Something went wrong, please try again. or contact support.')
     }
-    
 
-    return authResponse(StatusCodes.OK, 'OTP verified successfully, please reset your password.', undefined,undefined,undefined, token.token)
+
+
+    return authResponse(StatusCodes.OK, 'OTP verified successfully, please reset your password.', undefined,undefined,undefined, token?.token)
   }
 
 }
@@ -356,7 +358,7 @@ const getRefreshToken = async (token: string) => {
 const socialLogin = async (appId: string, deviceToken: string):Promise<IAuthResponse> => {
   const isUserExist = await User.findOne({
     appId,
-    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
+    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE] },
   })
   if (!isUserExist) {
     const createdUser = await User.create({
@@ -389,7 +391,7 @@ const resendOtpToPhoneOrEmail = async (
   const query = email ? { email: email } : { phone: phone }
   const isUserExist = await User.findOne({
     ...query,
-    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
+    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE] },
   }).select('+authentication')
   if (!isUserExist) {
     throw new ApiError(
@@ -487,7 +489,7 @@ const resendOtp = async (email:string, authType:'createAccount' | 'resetPassword
   console.log({email, authType})
   const isUserExist = await User.findOne({
     email: email.toLowerCase().trim(),
-    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.RESTRICTED] },
+    status: { $in: [USER_STATUS.ACTIVE, USER_STATUS.INACTIVE] },
   }).select('+authentication')
   if (!isUserExist) {
     throw new ApiError(
