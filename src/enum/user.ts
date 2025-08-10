@@ -5,8 +5,6 @@ export enum USER_ROLES {
   GUEST = 'guest',
 }
 
-
-
 export enum USER_STATUS {
     ACTIVE = 'active',
     INACTIVE = 'inactive',
