@@ -102,32 +102,7 @@ const getSingleOnboardingscreen = async (id: string): Promise<IOnboardingscreen>
   return result;
 };
 
-const updateOnboardingscreen = async (
-  id: string,
-  payload: Partial<IOnboardingscreen>
-): Promise<IOnboardingscreen | null> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Onboardingscreen ID');
-  }
 
-  const result = await Onboardingscreen.findByIdAndUpdate(
-    new Types.ObjectId(id),
-    { $set: payload },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
-
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested onboardingscreen not found, please try again with valid id'
-    );
-  }
-
-  return result;
-};
 
 const deleteOnboardingscreen = async (id: string): Promise<IOnboardingscreen> => {
   if (!Types.ObjectId.isValid(id)) {
@@ -149,6 +124,5 @@ export const OnboardingscreenServices = {
   createOnboardingscreen,
   getAllOnboardingscreens,
   getSingleOnboardingscreen,
-  updateOnboardingscreen,
   deleteOnboardingscreen,
 };

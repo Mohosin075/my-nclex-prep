@@ -52,19 +52,6 @@ const createOnboardingscreen = catchAsync(async (req: Request, res: Response) =>
   });
 })
 
-const updateOnboardingscreen = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const onboardingscreenData = req.body;
-
-  const result = await OnboardingscreenServices.updateOnboardingscreen(id, onboardingscreenData);
-
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: 'Onboardingscreen updated successfully',
-    data: result,
-  });
-});
 
 const getSingleOnboardingscreen = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -110,7 +97,6 @@ const deleteOnboardingscreen = catchAsync(async (req: Request, res: Response) =>
 
 export const OnboardingscreenController = {
   createOnboardingscreen,
-  updateOnboardingscreen,
   getSingleOnboardingscreen,
   getAllOnboardingscreens,
   deleteOnboardingscreen,

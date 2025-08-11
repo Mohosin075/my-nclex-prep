@@ -12,17 +12,11 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth(
-    USER_ROLES.ADMIN
-  ),
   OnboardingscreenController.getAllOnboardingscreens
 );
 
 router.get(
   '/:id',
-  auth(
-    USER_ROLES.ADMIN
-  ),
   OnboardingscreenController.getSingleOnboardingscreen
 );
 
@@ -36,15 +30,6 @@ router.post(
   OnboardingscreenController.createOnboardingscreen
 );
 
-router.patch(
-  '/:id',
-  auth(
-    USER_ROLES.ADMIN
-  ),
-
-  validateRequest(updateOnboardingSchema),
-  OnboardingscreenController.updateOnboardingscreen
-);
 
 router.delete(
   '/:id',

@@ -21,7 +21,6 @@ const decodeToken = (token: string): JwtPayload | null => {
 
 
 const verifyToken = (token: string, secret: Secret) => {
-  console.log({token, secret})
   return jwt.verify(token, secret) as JwtPayload
 }
 
