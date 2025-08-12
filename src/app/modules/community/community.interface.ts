@@ -1,8 +1,9 @@
 import { Model, Types } from 'mongoose';
 
 export interface AnswersItem {
+  _id?: Types.ObjectId;
   date: string;
-  comments: Record<string, any>;
+  comments: string
   userId: Types.ObjectId;
   User: string;
 }

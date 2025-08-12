@@ -4,7 +4,7 @@ export const answersItemSchema = z.object({
   body : z.object({
     userId: z.string().optional(),
     date: z.string().optional(),
-    comments: z.record(z.string(), z.any()),
+    comments: z.string(),
   })
 });
 

@@ -5,7 +5,7 @@ const answersItemSchema = new Schema({
   userId: { type: Schema.Types.ObjectId },
   User: { type: String },
   date: { type: String },
-  comments: { type: Schema.Types.Mixed },
+  comments: { type: String },
 
 });
 

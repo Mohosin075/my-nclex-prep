@@ -62,4 +62,11 @@ router.delete(
   CommunityController.deleteAnswer
 );
 
+
+router.patch(
+  '/:communityId/answers/:answerId',
+  auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT, USER_ROLES.TEACHER, USER_ROLES.GUEST),
+  CommunityController.updateAnswer
+);
+
 export const CommunityRoutes = router;

@@ -126,15 +126,12 @@ const updateCommunity = async (
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'User not authorized');
   }
 
-  const community = await Community.findOne({ _id: id, userId: user.authId });
+  const community = await Community.findOne({ _id: id}).populate('userId');
 
   if (!community) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Community not found');
   }
 
-
-  console.log({email : user.email, communityEmail: (community?.userId as IUser | undefined)?.email})
-console.log("hitt")
   if (user.email !== (community?.userId as IUser | undefined)?.email) {
     throw new ApiError(StatusCodes.FORBIDDEN, 'You are not allowed to delete this community');
   }
@@ -167,12 +164,12 @@ const deleteCommunity = async (id: string, user: JwtPayload | undefined): Promis
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'User not authorized');
   }
 
-  const community = await Community.findOne({ _id: id });
+  const community = await Community.findById({ _id: id }).populate('userId');
 
     if (!community) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Community not found');
   }
-
+  console.log({ email: user.email, userId: community?.userId as IUser | undefined });
   if (user.email !== (community?.userId as IUser | undefined)?.email) {
     throw new ApiError(StatusCodes.FORBIDDEN, 'You are not allowed to delete this community');
   }
@@ -228,6 +225,24 @@ export const deleteAnswer = async (
   if (!Types.ObjectId.isValid(answerId)) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Answer ID');
 
 
+  const isCommunityExist = await Community.findById(communityId).populate('userId');
+
+    if (!isCommunityExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Community not found');
+  }
+
+    const isAnswerExist = isCommunityExist?.answers?.find(answer => answer._id && answer._id.toString() === answerId);
+
+
+  if (!isAnswerExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Answer not found');
+  }
+
+  if (user.email !== (isCommunityExist?.userId as IUser | undefined)?.email) {
+    throw new ApiError(StatusCodes.FORBIDDEN, 'You are not allowed to delete this answer');
+  }
+
+
   const updated = await Community.findByIdAndUpdate(
     communityId,
     { $pull: { answers: { _id: answerId } }, $inc: { answersCount: -1 } },
@@ -237,6 +252,68 @@ export const deleteAnswer = async (
   if (!updated) throw new ApiError(StatusCodes.NOT_FOUND, 'Community not found');
 };
 
+
+
+const updateAnswer = async (
+  communityId: string,
+  answerId: string,
+  user: JwtPayload | undefined,
+  answerData: { comments: any }
+) => {
+  if (!user) throw new ApiError(StatusCodes.UNAUTHORIZED, 'User not authorized');
+  if (!Types.ObjectId.isValid(communityId)) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Community ID');
+  if (!Types.ObjectId.isValid(answerId)) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Answer ID');
+
+  const communityObjectId = new Types.ObjectId(communityId);
+  const answerObjectId = new Types.ObjectId(answerId);
+
+  if (!answerData.comments) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Comments are required');
+  }
+
+  // Step 1: Use aggregation to verify community and answer existence & user ownership
+  const result = await Community.aggregate([
+    { $match: { _id: communityObjectId } },
+    { $unwind: '$answers' },
+    { $match: { 'answers._id': answerObjectId } },
+    {
+      $lookup: {
+        from: 'users',                // assuming 'users' collection name
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'communityUser',
+      },
+    },
+    { $unwind: '$communityUser' },
+    {
+      $project: {
+        'communityUser.email': 1,
+        'answers._id': 1,
+        'answers.comments': 1,
+      }
+    }
+  ]);
+
+  if (!result.length) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Community or answer not found');
+  }
+
+  const communityUserEmail = result[0].communityUser.email;
+  if (user.email !== communityUserEmail) {
+    throw new ApiError(StatusCodes.FORBIDDEN, 'You are not allowed to update this answer');
+  }
+
+  // Step 2: Update the answer comments with arrayFilters
+  const updated = await Community.findOneAndUpdate(
+    { _id: communityObjectId },
+    { $set: { 'answers.$[elem].comments': answerData.comments } },
+    { new: true, arrayFilters: [{ 'elem._id': answerObjectId }] }
+  );
+
+  return updated;
+};
+
+
 export const CommunityServices = {
   createCommunity,
   getAllCommunitys,
@@ -245,5 +322,6 @@ export const CommunityServices = {
   deleteCommunity,
 
   addAnswer,
-  deleteAnswer
+  deleteAnswer,
+  updateAnswer
 };
