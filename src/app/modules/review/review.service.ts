@@ -11,10 +11,19 @@ import { paginationHelper } from '../../../helpers/paginationHelper';
 
 const createReview = async (user:JwtPayload,payload: IReview) => {
   payload.reviewer = user.authId;
+
+  const isUserExist = await User.findById(user.authId);
+
+  if (!isUserExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+  }
+
+  const reviewData = {...payload, reviewer: user.authId };
+
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const result = await Review.create([payload],{session});
+    const result = await Review.create([reviewData],{session});
     if(!result){
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Review, please try again later.')
     }
@@ -45,6 +54,7 @@ const createReview = async (user:JwtPayload,payload: IReview) => {
     await session.commitTransaction();
     return result[0];
   } catch (error) {
+    console.log({error})
     await session.abortTransaction();
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Review, please try again later.')
   }finally {
@@ -53,6 +63,7 @@ const createReview = async (user:JwtPayload,payload: IReview) => {
 };
 
 const getAllReviews = async (user:JwtPayload, type:'reviewer' | 'reviewee', paginationOptions:IPaginationOptions) => {
+
   const {page,limit,skip,sortBy,sortOrder} = paginationHelper.calculatePagination(paginationOptions);
 
 
@@ -66,8 +77,8 @@ const getAllReviews = async (user:JwtPayload, type:'reviewer' | 'reviewee', pagi
 
 
   const [result, total] = await Promise.all([
-    Review.find({[type]:user.authId}).populate('reviewer').populate('reviewee').skip(skip).limit(limit).sort({[sortBy]:sortOrder}),
-    Review.countDocuments({[type]:user.authId})
+    Review.find({}).populate('reviewer').populate('reviewee').skip(skip).limit(limit).sort({[sortBy]:sortOrder}),
+    Review.countDocuments({})
   ]);
 
 
@@ -151,6 +162,7 @@ const updateReview = async (
 
     return "Review updated successfully";
   } catch (error) {
+    console.log({error})
     await session.abortTransaction();
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Update review failed.');
   } finally {
@@ -207,10 +219,28 @@ const deleteReview = async (id: string, user: JwtPayload) => {
     // await redisClient.del(`reviews:reviewee:${existingReview.reviewee}:*`);
     return "Review deleted successfully";
   } catch (error) {
+
+    console.error("Error deleting review:", error);
     await session.abortTransaction();
     throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Delete review failed.');
   } finally {
     await session.endSession();
+  }
+};
+
+
+
+const getSingleReview = async (id: string, user: JwtPayload) => {
+  console.log("Fetching single review with ID:", id);
+  try {
+    const review = await Review.findById(id);
+    if (!review) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Review not found');
+    }
+
+    return review;
+  } catch (error) {
+    throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Get review failed');
   }
 };
 
@@ -220,4 +250,5 @@ export const ReviewServices = {
   getAllReviews,
   updateReview,
   deleteReview,
+  getSingleReview
 };

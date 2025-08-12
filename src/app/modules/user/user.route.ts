@@ -11,6 +11,17 @@ import {
 const router = express.Router()
 
 
+router.get(
+  '/profile',
+  auth(
+    USER_ROLES.ADMIN,
+    USER_ROLES.TEACHER,
+    USER_ROLES.STUDENT,
+    USER_ROLES.GUEST,
+  ),
+  UserController.getProfile
+)
+
 router.patch(
   '/profile',
   auth(

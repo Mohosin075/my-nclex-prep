@@ -138,4 +138,12 @@ const updateUserStatus = async (userId: string, status: USER_STATUS): Promise<st
   return 'User status updated successfully.'
 }
 
-export const UserServices = {  updateProfile, createAdmin, getAllUsers, deleteUser, getUserById, updateUserStatus }
+const getProfile = async (user: JwtPayload): Promise<IUser | null> => {
+  const userProfile = await User.findOne({ _id: user.authId, status: { $nin: [USER_STATUS.DELETED] } })
+  if (!userProfile) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
+  }
+  return userProfile
+}
+
+export const UserServices = {  updateProfile, createAdmin, getAllUsers, deleteUser, getUserById, updateUserStatus, getProfile }

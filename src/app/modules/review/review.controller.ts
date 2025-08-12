@@ -57,10 +57,24 @@ import pick from '../../../shared/pick';
       data: result,
     });
   });
-  
+
+
+  const getSingleReview = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await ReviewServices.getSingleReview(id, req.user!);
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: 'Review retrieved successfully',
+      data: result,
+    });
+  });
+
   export const ReviewController = {
     createReview,
     updateReview,
     getAllReviews,
     deleteReview,
+    getSingleReview
   };

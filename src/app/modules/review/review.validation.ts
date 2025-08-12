@@ -1,19 +1,17 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const ReviewValidations = {
-  create: z.object({
-    body: z.object({
-      reviewee: z.string(),
-      rating: z.number(),
-      review: z.string().optional(),
-    }),
+export const createReviewSchema = z.object({
+  body: z.object({
+    reviewee: z.string().optional(),
+    rating: z.number(),
+    review: z.string(),
   }),
+});
 
-  update: z.object({
-    body: z.object({
-      reviewee: z.string().optional(),
-      rating: z.number().optional(),
-      review: z.string().optional(),
-    }),
+export const updateReviewSchema = z.object({
+  body: z.object({
+    reviewee: z.string().optional(),
+    rating: z.number().optional(),
+    review: z.string().optional(),
   }),
-};
+});

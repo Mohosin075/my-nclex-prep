@@ -69,10 +69,22 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+
+const getProfile = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getProfile(req.user!)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'User profile retrieved successfully',
+    data: result,
+  })
+})
+
 export const UserController = {
   updateProfile,
   getAllUsers,
   deleteUser,
   getUserById,
   updateUserStatus,
+  getProfile
 }

@@ -4,9 +4,9 @@ import { IUser } from '../user/user.interface';
 export type IReview = {
   _id?: Types.ObjectId;
   reviewer: Types.ObjectId | IUser;
-  reviewee: Types.ObjectId | IUser;
+  reviewee?: Types.ObjectId | IUser;
   rating: number;
-  review?: string;
+  review: string;
   createdAt: Date;
   updatedAt: Date;
 };
