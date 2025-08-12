@@ -2,7 +2,7 @@ import { Model, Types } from 'mongoose';
 
 export interface AnswersItem {
   date: string;
-  array: Record<string, any>;
+  comments: Record<string, any>;
   userId: Types.ObjectId;
   User: string;
 }

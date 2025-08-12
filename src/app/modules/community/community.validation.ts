@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
 export const answersItemSchema = z.object({
-  userId: z.string(),
-  User: z.string(),
-  date: z.string(),
-  array: z.record(z.string(), z.any()),
+  body : z.object({
+    userId: z.string().optional(),
+    date: z.string().optional(),
+    comments: z.record(z.string(), z.any()),
+  })
 });
 
 export const createCommunitySchema = z.object({

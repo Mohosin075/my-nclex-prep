@@ -188,10 +188,62 @@ const deleteCommunity = async (id: string, user: JwtPayload | undefined): Promis
   return result;
 };
 
+
+
+export const addAnswer = async (
+  communityId: string,
+  user: JwtPayload | undefined,
+  answerData: { comments: any }
+) => {
+  if (!user) throw new ApiError(StatusCodes.UNAUTHORIZED, 'User not authorized');
+  if (!Types.ObjectId.isValid(communityId)) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Community ID');
+
+  const answer = {
+    _id: new Types.ObjectId(),
+    userId: user.authId,
+    User: user.email || user.authId, // or grab username if available
+    date: new Date().toISOString(),
+    comments: answerData.comments,
+  };
+
+  const updated = await Community.findByIdAndUpdate(
+    communityId,
+    { $push: { answers: answer }, $inc: { answersCount: 1 } },
+    { new: true }
+  );
+
+  if (!updated) throw new ApiError(StatusCodes.NOT_FOUND, 'Community not found');
+  return updated;
+};
+
+
+
+export const deleteAnswer = async (
+  communityId: string,
+  answerId: string,
+  user: JwtPayload | undefined
+) => {
+  if (!user) throw new ApiError(StatusCodes.UNAUTHORIZED, 'User not authorized');
+  if (!Types.ObjectId.isValid(communityId)) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Community ID');
+  if (!Types.ObjectId.isValid(answerId)) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Answer ID');
+
+
+  const updated = await Community.findByIdAndUpdate(
+    communityId,
+    { $pull: { answers: { _id: answerId } }, $inc: { answersCount: -1 } },
+    { new: true }
+  );
+
+  if (!updated) throw new ApiError(StatusCodes.NOT_FOUND, 'Community not found');
+};
+
 export const CommunityServices = {
   createCommunity,
   getAllCommunitys,
   getSingleCommunity,
   updateCommunity,
   deleteCommunity,
+
+  addAnswer,
+  deleteAnswer
 };

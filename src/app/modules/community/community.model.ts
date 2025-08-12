@@ -5,9 +5,9 @@ const answersItemSchema = new Schema({
   userId: { type: Schema.Types.ObjectId },
   User: { type: String },
   date: { type: String },
-  array: { type: Schema.Types.Mixed },
+  comments: { type: Schema.Types.Mixed },
 
-}, { _id: false });
+});
 
 const communitySchema = new Schema<ICommunity, CommunityModel>({
   userId: { type: Schema.Types.ObjectId, ref: 'User' },

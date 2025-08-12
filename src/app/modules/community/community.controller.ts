@@ -83,10 +83,44 @@ const deleteCommunity = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const addAnswer = catchAsync(async (req: Request, res: Response) => {
+  const { communityId } = req.params;
+  const user = req.user;
+  const answerData = req.body;
+
+  const result = await CommunityServices.addAnswer(communityId, user, answerData);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    success: true,
+    message: 'Answer added successfully',
+    data: result,
+  });
+});
+
+
+
+
+const deleteAnswer = catchAsync(async (req: Request, res: Response) => {
+  const { communityId, answerId } = req.params;
+  const user = req.user;
+
+  await CommunityServices.deleteAnswer(communityId, answerId, user);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Answer deleted successfully',
+    data: {},
+  });
+});
+
 export const CommunityController = {
   createCommunity,
   updateCommunity,
   getSingleCommunity,
   getAllCommunitys,
   deleteCommunity,
+  addAnswer,
+  deleteAnswer
 };

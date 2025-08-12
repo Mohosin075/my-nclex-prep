@@ -1,6 +1,6 @@
 import express from 'express';
 import { CommunityController } from './community.controller';
-import { createCommunitySchema, updateCommunitySchema } from './community.validation';
+import { answersItemSchema, createCommunitySchema, updateCommunitySchema } from './community.validation';
 import validateRequest from '../../middleware/validateRequest';
 import auth from '../../middleware/auth';
 import { USER_ROLES } from '../../../enum/user';
@@ -44,6 +44,22 @@ router.delete(
     USER_ROLES.ADMIN, USER_ROLES.STUDENT, USER_ROLES.TEACHER, USER_ROLES.GUEST
   ),
   CommunityController.deleteCommunity
+);
+
+
+// Add an answer
+router.post(
+  '/:communityId/answers',
+  auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT, USER_ROLES.TEACHER, USER_ROLES.GUEST),
+  // validateRequest(answersItemSchema),
+  CommunityController.addAnswer
+);
+
+
+router.delete(
+  '/:communityId/answers/:answerId',
+  auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT, USER_ROLES.TEACHER, USER_ROLES.GUEST),
+  CommunityController.deleteAnswer
 );
 
 export const CommunityRoutes = router;
