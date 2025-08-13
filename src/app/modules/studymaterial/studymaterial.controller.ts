@@ -12,6 +12,12 @@ import ApiError from '../../../errors/ApiError';
 const createStudymaterial = catchAsync(async (req: Request, res: Response) => {
   const studymaterialData = req.body;
 
+  const {name, category} = studymaterialData
+
+  if(!name || !category) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'All fields are required');
+  }
+
   const docFiles = (req.files as any).doc as Express.Multer.File[];
   if (!docFiles || docFiles.length === 0) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'No document file provided');
