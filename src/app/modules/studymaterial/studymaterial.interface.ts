@@ -18,7 +18,7 @@ export interface IStudymaterial {
   uploadDate: Date;
   type: string;
   fileUrl: string;
-  Date : Date
+  Date : Date;
   uploadedBy: Types.ObjectId;
 }
 

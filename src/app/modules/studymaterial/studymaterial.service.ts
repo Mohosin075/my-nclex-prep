@@ -7,6 +7,8 @@ import { IPaginationOptions } from '../../../interfaces/pagination';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { studymaterialSearchableFields } from './studymaterial.constants';
 import { Types } from 'mongoose';
+import { deleteFromS3 } from '../../../helpers/image/s3helper';
+import { logger } from '../../../shared/logger';
 
 
 const createStudymaterial = async (
@@ -104,20 +106,35 @@ const getSingleStudymaterial = async (id: string): Promise<IStudymaterial> => {
 };
 
 
-const deleteStudymaterial = async (id: string): Promise<IStudymaterial> => {
+export const deleteStudymaterial = async (id: string): Promise<void> => {
+  // 1️⃣ Validate ID
   if (!Types.ObjectId.isValid(id)) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studymaterial ID');
   }
 
-  const result = await Studymaterial.findByIdAndDelete(id);
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Something went wrong while deleting studymaterial, please try again with valid id.'
-    );
+  // 2️⃣ Check if it exists
+  const studymaterial = await Studymaterial.findById(id);
+  if (!studymaterial) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Studymaterial not found');
   }
 
-  return result;
+  // 3️⃣ Delete file from S3 if exists
+  if (studymaterial.fileUrl) {
+    try {
+      const url = new URL(studymaterial.fileUrl);
+      const fileKey = url.pathname.slice(1); // gets full path relative to bucket
+      await deleteFromS3(fileKey);
+      logger.info(`File deleted from S3: ${fileKey}`);
+    } catch (error) {
+      logger.error('Failed to delete file from S3', error);
+      // optionally, you can continue or throw error depending on your flow
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to delete file from S3');
+    }
+  }
+
+  // 4️⃣ Delete from MongoDB
+  await Studymaterial.findByIdAndDelete(id);
+  logger.info(`Studymaterial deleted from DB: ${id}`);
 };
 
 export const StudymaterialServices = {
