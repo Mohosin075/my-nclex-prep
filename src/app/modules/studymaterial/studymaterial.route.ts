@@ -4,6 +4,7 @@ import { StudymaterialValidations } from './studymaterial.validation';
 import validateRequest from '../../middleware/validateRequest';
 import auth from '../../middleware/auth';
 import { USER_ROLES } from '../../../enum/user';
+import fileUploadHandler from '../../middleware/fileUploadHandler';
 
 
 const router = express.Router();
@@ -29,8 +30,10 @@ router.post(
   auth(
     USER_ROLES.ADMIN
   ),
+  
+  fileUploadHandler(),
 
-  validateRequest(StudymaterialValidations.create),
+  // validateRequest(StudymaterialValidations.create),
   StudymaterialController.createStudymaterial
 );
 

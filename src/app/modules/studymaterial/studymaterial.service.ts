@@ -14,7 +14,8 @@ const createStudymaterial = async (
   payload: IStudymaterial
 ): Promise<IStudymaterial> => {
   try {
-    const result = await Studymaterial.create(payload);
+    const data = { ...payload, uploadedBy: user.authId };
+    const result = await Studymaterial.create(data);
     if (!result) {
       
       throw new ApiError(

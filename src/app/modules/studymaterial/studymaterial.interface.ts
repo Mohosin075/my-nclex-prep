@@ -1,4 +1,5 @@
 import { Model, Types } from 'mongoose';
+import { StudyMaterialCategory } from '../../../enum/studyMaterial';
 
 export interface IStudymaterialFilterables {
   searchTerm?: string;
@@ -8,14 +9,16 @@ export interface IStudymaterialFilterables {
   fileUrl?: string;
 }
 
+
 export interface IStudymaterial {
   _id: Types.ObjectId;
   name: string;
-  category: string;
+  category: StudyMaterialCategory;
   size: string;
   uploadDate: Date;
   type: string;
   fileUrl: string;
+  Date : Date
   uploadedBy: Types.ObjectId;
 }
 
