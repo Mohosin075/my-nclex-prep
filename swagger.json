@@ -656,6 +656,223 @@
           }
         }
       }
+    },
+    "/studymaterial": {
+      "post": {
+        "tags": [
+          "Studymaterial"
+        ],
+        "summary": "Create a new Studymaterial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudymaterialCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Studymaterial created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studymaterial"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Studymaterial"
+        ],
+        "summary": "Get all Studymaterials",
+        "responses": {
+          "200": {
+            "description": "List of Studymaterials retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Studymaterial"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/studymaterial/{id}": {
+      "get": {
+        "tags": [
+          "Studymaterial"
+        ],
+        "summary": "Get Studymaterial by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Studymaterial ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Studymaterial retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studymaterial"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Studymaterial not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Studymaterial"
+        ],
+        "summary": "Update Studymaterial",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Studymaterial ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudymaterialUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Studymaterial updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studymaterial"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Studymaterial not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Studymaterial"
+        ],
+        "summary": "Delete Studymaterial",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Studymaterial ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Studymaterial deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studymaterial"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Studymaterial not found"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1106,6 +1323,141 @@
           "status": {
             "type": "string",
             "description": "status field"
+          }
+        }
+      },
+      "Studymaterial": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "MongoDB ObjectId"
+          },
+          "name": {
+            "type": "string",
+            "description": "name field"
+          },
+          "category": {
+            "type": "string",
+            "description": "category field"
+          },
+          "size": {
+            "type": "string",
+            "description": "size field"
+          },
+          "uploadDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "uploadDate field"
+          },
+          "type": {
+            "type": "string",
+            "description": "type field"
+          },
+          "fileUrl": {
+            "type": "string",
+            "description": "fileUrl field"
+          },
+          "uploadedBy": {
+            "type": "string",
+            "description": "uploadedBy reference ID"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": [
+          "_id",
+          "name",
+          "category",
+          "size",
+          "uploadDate",
+          "type",
+          "fileUrl",
+          "uploadedBy"
+        ]
+      },
+      "StudymaterialCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name field"
+          },
+          "category": {
+            "type": "string",
+            "description": "category field"
+          },
+          "size": {
+            "type": "string",
+            "description": "size field"
+          },
+          "uploadDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "uploadDate field"
+          },
+          "type": {
+            "type": "string",
+            "description": "type field"
+          },
+          "fileUrl": {
+            "type": "string",
+            "description": "fileUrl field"
+          },
+          "uploadedBy": {
+            "type": "string",
+            "description": "uploadedBy reference ID"
+          }
+        },
+        "required": [
+          "name",
+          "category",
+          "size",
+          "uploadDate",
+          "type",
+          "fileUrl",
+          "uploadedBy"
+        ]
+      },
+      "StudymaterialUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name field"
+          },
+          "category": {
+            "type": "string",
+            "description": "category field"
+          },
+          "size": {
+            "type": "string",
+            "description": "size field"
+          },
+          "uploadDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "uploadDate field"
+          },
+          "type": {
+            "type": "string",
+            "description": "type field"
+          },
+          "fileUrl": {
+            "type": "string",
+            "description": "fileUrl field"
+          },
+          "uploadedBy": {
+            "type": "string",
+            "description": "uploadedBy reference ID"
           }
         }
       }

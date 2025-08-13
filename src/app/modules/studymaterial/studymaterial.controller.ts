@@ -1,0 +1,88 @@
+import { Request, Response } from 'express';
+import { StudymaterialServices } from './studymaterial.service';
+import catchAsync from '../../../shared/catchAsync';
+import sendResponse from '../../../shared/sendResponse';
+import { StatusCodes } from 'http-status-codes';
+import pick from '../../../shared/pick';
+import { studymaterialFilterables } from './studymaterial.constants';
+import { paginationFields } from '../../../interfaces/pagination';
+
+const createStudymaterial = catchAsync(async (req: Request, res: Response) => {
+  const studymaterialData = req.body;
+
+  const result = await StudymaterialServices.createStudymaterial(
+    req.user!,
+    studymaterialData
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    success: true,
+    message: 'Studymaterial created successfully',
+    data: result,
+  });
+});
+
+const updateStudymaterial = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const studymaterialData = req.body;
+
+  const result = await StudymaterialServices.updateStudymaterial(id, studymaterialData);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Studymaterial updated successfully',
+    data: result,
+  });
+});
+
+const getSingleStudymaterial = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await StudymaterialServices.getSingleStudymaterial(id);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Studymaterial retrieved successfully',
+    data: result,
+  });
+});
+
+const getAllStudymaterials = catchAsync(async (req: Request, res: Response) => {
+  const filterables = pick(req.query, studymaterialFilterables);
+  const pagination = pick(req.query, paginationFields);
+
+  const result = await StudymaterialServices.getAllStudymaterials(
+    req.user!,
+    filterables,
+    pagination
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Studymaterials retrieved successfully',
+    data: result,
+  });
+});
+
+const deleteStudymaterial = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await StudymaterialServices.deleteStudymaterial(id);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Studymaterial deleted successfully',
+    data: result,
+  });
+});
+
+export const StudymaterialController = {
+  createStudymaterial,
+  updateStudymaterial,
+  getSingleStudymaterial,
+  getAllStudymaterials,
+  deleteStudymaterial,
+};

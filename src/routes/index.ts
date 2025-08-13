@@ -8,6 +8,7 @@ import { SupportRoutes } from '../app/modules/support/support.route'
 import { OnboardingscreenRoutes } from '../app/modules/onboardingscreen/onboardingscreen.route'
 import { CommunityRoutes } from '../app/modules/community/community.route'
 import { ReviewRoutes } from '../app/modules/review/review.route'
+import { StudymaterialRoutes } from '../app/modules/studymaterial/studymaterial.route'
 
 const router = express.Router()
 
@@ -25,7 +26,8 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/community', route: CommunityRoutes },
   { path: '/review', route: ReviewRoutes }
 
-]
+,
+  { path: '/studymaterial', route: StudymaterialRoutes }]
 
 apiRoutes.forEach(route => {
   router.use(route.path, route.route)
