@@ -43,22 +43,6 @@ const createStudymaterial = catchAsync(async (req: Request, res: Response) => {
 });
 
 
-
-
-const updateStudymaterial = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const studymaterialData = req.body;
-
-  const result = await StudymaterialServices.updateStudymaterial(id, studymaterialData);
-
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: 'Studymaterial updated successfully',
-    data: result,
-  });
-});
-
 const getSingleStudymaterial = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await StudymaterialServices.getSingleStudymaterial(id);
@@ -103,7 +87,6 @@ const deleteStudymaterial = catchAsync(async (req: Request, res: Response) => {
 
 export const StudymaterialController = {
   createStudymaterial,
-  updateStudymaterial,
   getSingleStudymaterial,
   getAllStudymaterials,
   deleteStudymaterial,

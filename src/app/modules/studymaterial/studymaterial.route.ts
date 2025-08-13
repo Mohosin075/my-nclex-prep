@@ -12,7 +12,8 @@ const router = express.Router();
 router.get(
   '/',
   auth(
-    USER_ROLES.ADMIN
+    USER_ROLES.ADMIN,
+    USER_ROLES.STUDENT
   ),
   StudymaterialController.getAllStudymaterials
 );
@@ -35,16 +36,6 @@ router.post(
 
   // validateRequest(StudymaterialValidations.create),
   StudymaterialController.createStudymaterial
-);
-
-router.patch(
-  '/:id',
-  auth(
-    USER_ROLES.ADMIN
-  ),
-
-  validateRequest(StudymaterialValidations.update),
-  StudymaterialController.updateStudymaterial
 );
 
 router.delete(

@@ -103,32 +103,6 @@ const getSingleStudymaterial = async (id: string): Promise<IStudymaterial> => {
   return result;
 };
 
-const updateStudymaterial = async (
-  id: string,
-  payload: Partial<IStudymaterial>
-): Promise<IStudymaterial | null> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studymaterial ID');
-  }
-
-  const result = await Studymaterial.findByIdAndUpdate(
-    new Types.ObjectId(id),
-    { $set: payload },
-    {
-      new: true,
-      runValidators: true,
-    }
-  ).populate('uploadedBy');
-
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested studymaterial not found, please try again with valid id'
-    );
-  }
-
-  return result;
-};
 
 const deleteStudymaterial = async (id: string): Promise<IStudymaterial> => {
   if (!Types.ObjectId.isValid(id)) {
@@ -150,6 +124,5 @@ export const StudymaterialServices = {
   createStudymaterial,
   getAllStudymaterials,
   getSingleStudymaterial,
-  updateStudymaterial,
   deleteStudymaterial,
 };
