@@ -9,6 +9,7 @@ import { OnboardingscreenRoutes } from '../app/modules/onboardingscreen/onboardi
 import { CommunityRoutes } from '../app/modules/community/community.route'
 import { ReviewRoutes } from '../app/modules/review/review.route'
 import { StudymaterialRoutes } from '../app/modules/studymaterial/studymaterial.route'
+import { ExamRoutes } from '../app/modules/exam/exam.route'
 
 const router = express.Router()
 
@@ -27,7 +28,8 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/review', route: ReviewRoutes }
 
 ,
-  { path: '/studymaterial', route: StudymaterialRoutes }]
+  { path: '/studymaterial', route: StudymaterialRoutes },
+  { path: '/exam', route: ExamRoutes }]
 
 apiRoutes.forEach(route => {
   router.use(route.path, route.route)
