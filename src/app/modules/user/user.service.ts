@@ -9,11 +9,24 @@ import { JwtPayload } from 'jsonwebtoken'
 import { logger } from '../../../shared/logger'
 import { paginationHelper } from '../../../helpers/paginationHelper'
 import { IPaginationOptions } from '../../../interfaces/pagination'
-
-
+import { S3Helper } from '../../../helpers/image/s3helper'
 
 const updateProfile = async (user: JwtPayload, payload: Partial<IUser>) => {
-  // console.log(first)
+  const isUserExist = await User.findOne({
+    _id: user.authId,
+    status: { $nin: [USER_STATUS.DELETED] },
+  })
+
+  if (!isUserExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
+  }
+
+  if (isUserExist.profile) {
+    const url = new URL(isUserExist.profile)
+    const key = url.pathname.substring(1)
+    await S3Helper.deleteFromS3(key)
+  }
+
   const updatedProfile = await User.findOneAndUpdate(
     { _id: user.authId, status: { $nin: [USER_STATUS.DELETED] } },
     {
@@ -62,10 +75,9 @@ const createAdmin = async (): Promise<Partial<IUser> | null> => {
   return result[0]
 }
 
-
-
 const getAllUsers = async (paginationOptions: IPaginationOptions) => {
-  const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(paginationOptions);
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(paginationOptions)
 
   const [result, total] = await Promise.all([
     User.find({ status: { $nin: [USER_STATUS.DELETED] } })
@@ -74,8 +86,8 @@ const getAllUsers = async (paginationOptions: IPaginationOptions) => {
       .sort({ [sortBy]: sortOrder })
       .exec(),
 
-    User.countDocuments({ status: { $nin: [USER_STATUS.DELETED] } })
-  ]);
+    User.countDocuments({ status: { $nin: [USER_STATUS.DELETED] } }),
+  ])
 
   return {
     meta: {
@@ -85,12 +97,14 @@ const getAllUsers = async (paginationOptions: IPaginationOptions) => {
       totalPages: Math.ceil(total / limit),
     },
     data: result,
-  };
-};
-
+  }
+}
 
 const deleteUser = async (userId: string): Promise<string> => {
-  const isUserExist = await User.findOne({ _id: userId, status: { $nin: [USER_STATUS.DELETED] } });
+  const isUserExist = await User.findOne({
+    _id: userId,
+    status: { $nin: [USER_STATUS.DELETED] },
+  })
   if (!isUserExist) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
   }
@@ -107,10 +121,12 @@ const deleteUser = async (userId: string): Promise<string> => {
 
   return 'User deleted successfully.'
 }
-
 
 const deleteProfile = async (userId: string): Promise<string> => {
-  const isUserExist = await User.findOne({ _id: userId, status: { $nin: [USER_STATUS.DELETED] } });
+  const isUserExist = await User.findOne({
+    _id: userId,
+    status: { $nin: [USER_STATUS.DELETED] },
+  })
   if (!isUserExist) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
   }
@@ -128,19 +144,29 @@ const deleteProfile = async (userId: string): Promise<string> => {
   return 'User deleted successfully.'
 }
 
-
 const getUserById = async (userId: string): Promise<IUser | null> => {
-  const isUserExist = await User.findOne({ _id: userId, status: { $nin: [USER_STATUS.DELETED] } })
+  const isUserExist = await User.findOne({
+    _id: userId,
+    status: { $nin: [USER_STATUS.DELETED] },
+  })
   if (!isUserExist) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
   }
-  const user = await User.findOne({ _id: userId, status: { $nin: [USER_STATUS.DELETED] } })
+  const user = await User.findOne({
+    _id: userId,
+    status: { $nin: [USER_STATUS.DELETED] },
+  })
   return user
 }
 
-
-const updateUserStatus = async (userId: string, status: USER_STATUS): Promise<string> => {
-  const isUserExist = await User.findOne({ _id: userId, status: { $nin: [USER_STATUS.DELETED] } })
+const updateUserStatus = async (
+  userId: string,
+  status: USER_STATUS,
+): Promise<string> => {
+  const isUserExist = await User.findOne({
+    _id: userId,
+    status: { $nin: [USER_STATUS.DELETED] },
+  })
   if (!isUserExist) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
   }
@@ -159,11 +185,23 @@ const updateUserStatus = async (userId: string, status: USER_STATUS): Promise<st
 }
 
 const getProfile = async (user: JwtPayload): Promise<IUser | null> => {
-  const userProfile = await User.findOne({ _id: user.authId, status: { $nin: [USER_STATUS.DELETED] } })
+  const userProfile = await User.findOne({
+    _id: user.authId,
+    status: { $nin: [USER_STATUS.DELETED] },
+  })
   if (!userProfile) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
   }
   return userProfile
 }
 
-export const UserServices = {  updateProfile, createAdmin, getAllUsers, deleteUser, getUserById, updateUserStatus, getProfile, deleteProfile }
+export const UserServices = {
+  updateProfile,
+  createAdmin,
+  getAllUsers,
+  deleteUser,
+  getUserById,
+  updateUserStatus,
+  getProfile,
+  deleteProfile,
+}

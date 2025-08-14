@@ -12,9 +12,9 @@ import { JwtPayload } from 'jsonwebtoken'
 
 
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
-  const { image, ...userData } = req.body
+  const { imageUrl, ...userData } = req.body
 
-  image && (userData.profile = image[0])
+  imageUrl && (userData.profile = imageUrl)
   const result = await UserServices.updateProfile(req.user!, userData)
   sendResponse<String>(res, {
     statusCode: StatusCodes.OK,
