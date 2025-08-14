@@ -8,6 +8,7 @@ import { UserServices } from './user.service'
 import pick from '../../../shared/pick'
 import { paginationFields } from '../../../interfaces/pagination'
 import { JwtPayload } from 'jsonwebtoken'
+import ApiError from '../../../errors/ApiError'
 
 
 
@@ -49,7 +50,13 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
 
 const deleteProfile = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as JwtPayload
-  const result = await UserServices.deleteProfile(user.authId)
+  const { password } = req.body
+
+  if (!password) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Password is required')
+  }
+
+  const result = await UserServices.deleteProfile(user.authId, password)
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,

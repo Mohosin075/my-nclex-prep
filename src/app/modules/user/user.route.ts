@@ -70,19 +70,6 @@ router.patch(
   UserController.updateProfile,
 )
 
-// router.patch(
-//   '/profile',
-//   auth(
-//     USER_ROLES.ADMIN,
-//     USER_ROLES.TEACHER,
-//     USER_ROLES.STUDENT,
-//     USER_ROLES.GUEST,
-//   ),
-//   fileAndBodyProcessorUsingDiskStorage(),
-//   validateRequest(UserValidations.updateUserZodSchema),
-//   UserController.updateProfile,
-// )
-
 router.delete(
   '/profile',
   auth(

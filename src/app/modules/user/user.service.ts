@@ -122,13 +122,24 @@ const deleteUser = async (userId: string): Promise<string> => {
   return 'User deleted successfully.'
 }
 
-const deleteProfile = async (userId: string): Promise<string> => {
+const deleteProfile = async (
+  userId: string,
+  password: string,
+): Promise<string> => {
   const isUserExist = await User.findOne({
     _id: userId,
     status: { $nin: [USER_STATUS.DELETED] },
-  })
+  }).select('+password')
   if (!isUserExist) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
+  }
+  const isPasswordMatched = await User.isPasswordMatched(
+    password,
+    isUserExist.password,
+  )
+
+  if (!isPasswordMatched) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'Password is incorrect.')
   }
 
   const deletedUser = await User.findOneAndUpdate(
