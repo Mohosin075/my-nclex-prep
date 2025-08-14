@@ -4,7 +4,7 @@ export const createOnboardingSchema = z.object({
   body: z.object({
     title: z.string(),
     description: z.string(),
-    imageURL: z.string().optional(),
+    imageURL: z.string(),
     order: z.number().optional(),
     actionText: z.string().optional(),
     skipEnabled: z.boolean().optional(),
