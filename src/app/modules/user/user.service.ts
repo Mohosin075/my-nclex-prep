@@ -109,6 +109,26 @@ const deleteUser = async (userId: string): Promise<string> => {
 }
 
 
+const deleteProfile = async (userId: string): Promise<string> => {
+  const isUserExist = await User.findOne({ _id: userId, status: { $nin: [USER_STATUS.DELETED] } });
+  if (!isUserExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found.')
+  }
+
+  const deletedUser = await User.findOneAndUpdate(
+    { _id: userId, status: { $nin: [USER_STATUS.DELETED] } },
+    { $set: { status: USER_STATUS.DELETED } },
+    { new: true },
+  )
+
+  if (!deletedUser) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to delete user.')
+  }
+
+  return 'User deleted successfully.'
+}
+
+
 const getUserById = async (userId: string): Promise<IUser | null> => {
   const isUserExist = await User.findOne({ _id: userId, status: { $nin: [USER_STATUS.DELETED] } })
   if (!isUserExist) {
@@ -146,4 +166,4 @@ const getProfile = async (user: JwtPayload): Promise<IUser | null> => {
   return userProfile
 }
 
-export const UserServices = {  updateProfile, createAdmin, getAllUsers, deleteUser, getUserById, updateUserStatus, getProfile }
+export const UserServices = {  updateProfile, createAdmin, getAllUsers, deleteUser, getUserById, updateUserStatus, getProfile, deleteProfile }

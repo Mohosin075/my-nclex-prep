@@ -7,6 +7,7 @@ import sendResponse from '../../../shared/sendResponse'
 import { UserServices } from './user.service'
 import pick from '../../../shared/pick'
 import { paginationFields } from '../../../interfaces/pagination'
+import { JwtPayload } from 'jsonwebtoken'
 
 
 
@@ -42,6 +43,17 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'User deleted successfully',
+    data: result,
+  })
+})
+
+const deleteProfile = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user as JwtPayload
+  const result = await UserServices.deleteProfile(user.authId)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'User profile deleted successfully',
     data: result,
   })
 })
@@ -86,5 +98,6 @@ export const UserController = {
   deleteUser,
   getUserById,
   updateUserStatus,
-  getProfile
+  getProfile,
+  deleteProfile
 }

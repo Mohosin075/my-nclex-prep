@@ -34,6 +34,16 @@ router.patch(
   validateRequest(UserValidations.updateUserZodSchema),
   UserController.updateProfile,
 )
+router.delete(
+  '/profile',
+  auth(
+    USER_ROLES.ADMIN,
+    USER_ROLES.TEACHER,
+    USER_ROLES.STUDENT,
+    USER_ROLES.GUEST,
+  ),
+  UserController.deleteProfile,
+)
 
 router.route('/')
 .get(auth(USER_ROLES.ADMIN), UserController.getAllUsers)
