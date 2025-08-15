@@ -8,6 +8,7 @@ import { studymaterialFilterables } from './studymaterial.constants';
 import { paginationFields } from '../../../interfaces/pagination';
 import { S3Helper } from '../../../helpers/image/s3helper';
 import ApiError from '../../../errors/ApiError';
+import { StudyMaterialCategory } from '../../../enum/studyMaterial';
 
 const createStudymaterial = catchAsync(async (req: Request, res: Response) => {
   const studymaterialData = req.body;
@@ -79,6 +80,27 @@ const getAllStudymaterials = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllStudyGuides = catchAsync(async (req: Request, res: Response) => {
+  const filterables = pick(req.query, studymaterialFilterables);
+  const pagination = pick(req.query, paginationFields);
+
+  const category = StudyMaterialCategory.STUDY_GUIDE;
+
+  const result = await StudymaterialServices.getAllStudyGuides(
+    req.user!,
+    filterables,
+    pagination,
+    category
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'StudyGuides retrieved successfully',
+    data: result,
+  });
+});
+
 const deleteStudymaterial = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await StudymaterialServices.deleteStudymaterial(id);
@@ -96,4 +118,5 @@ export const StudymaterialController = {
   getSingleStudymaterial,
   getAllStudymaterials,
   deleteStudymaterial,
+  getAllStudyGuides
 };

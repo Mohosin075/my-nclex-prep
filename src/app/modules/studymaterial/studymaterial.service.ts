@@ -9,6 +9,7 @@ import { studymaterialSearchableFields } from './studymaterial.constants';
 import { Types } from 'mongoose';
 import { deleteFromS3 } from '../../../helpers/image/s3helper';
 import { logger } from '../../../shared/logger';
+import { StudyMaterialCategory } from '../../../enum/studyMaterial';
 
 
 const createStudymaterial = async (
@@ -19,7 +20,7 @@ const createStudymaterial = async (
     const data = { ...payload, uploadedBy: user.authId };
     const result = await Studymaterial.create(data);
     if (!result) {
-      
+
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
         'Failed to create Studymaterial, please try again with valid data.'
@@ -28,7 +29,7 @@ const createStudymaterial = async (
 
     return result;
   } catch (error: any) {
-    
+
     if (error.code === 11000) {
       throw new ApiError(StatusCodes.CONFLICT, 'Duplicate entry found');
     }
@@ -88,6 +89,66 @@ const getAllStudymaterials = async (
     data: result,
   };
 };
+const getAllStudyGuides = async (
+  user: JwtPayload,
+  filterables: IStudymaterialFilterables,
+  pagination: IPaginationOptions,
+  category: StudyMaterialCategory.STUDY_GUIDE
+) => {
+  const { searchTerm, ...filterData } = filterables;
+  const { page, skip, limit, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(pagination);
+
+  const andConditions: any[] = [];
+
+  // ✅ Always filter by category
+  if (category) {
+    andConditions.push({ category });
+  }
+
+  // Search functionality
+  if (searchTerm) {
+    andConditions.push({
+      $or: studymaterialSearchableFields.map((field) => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: "i",
+        },
+      })),
+    });
+  }
+
+  // Other filters
+  if (Object.keys(filterData).length) {
+    andConditions.push({
+      $and: Object.entries(filterData).map(([key, value]) => ({
+        [key]: value,
+      })),
+    });
+  }
+
+  const whereConditions = andConditions.length ? { $and: andConditions } : {};
+
+  const [result, total] = await Promise.all([
+    Studymaterial.find(whereConditions)
+      .skip(skip)
+      .limit(limit)
+      .sort({ [sortBy]: sortOrder })
+      .populate("uploadedBy"),
+    Studymaterial.countDocuments(whereConditions),
+  ]);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+    data: result,
+  };
+};
+
 
 const getSingleStudymaterial = async (id: string): Promise<IStudymaterial> => {
   if (!Types.ObjectId.isValid(id)) {
@@ -142,4 +203,5 @@ export const StudymaterialServices = {
   getAllStudymaterials,
   getSingleStudymaterial,
   deleteStudymaterial,
+  getAllStudyGuides
 };
