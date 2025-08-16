@@ -1090,6 +1090,223 @@
           }
         }
       }
+    },
+    "/studyschedule": {
+      "post": {
+        "tags": [
+          "Studyschedule"
+        ],
+        "summary": "Create a new Studyschedule",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyscheduleCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Studyschedule created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studyschedule"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Studyschedule"
+        ],
+        "summary": "Get all Studyschedules",
+        "responses": {
+          "200": {
+            "description": "List of Studyschedules retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Studyschedule"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/studyschedule/{id}": {
+      "get": {
+        "tags": [
+          "Studyschedule"
+        ],
+        "summary": "Get Studyschedule by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Studyschedule ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Studyschedule retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studyschedule"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Studyschedule not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Studyschedule"
+        ],
+        "summary": "Update Studyschedule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Studyschedule ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyscheduleUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Studyschedule updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studyschedule"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Studyschedule not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Studyschedule"
+        ],
+        "summary": "Delete Studyschedule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Studyschedule ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Studyschedule deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Studyschedule"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Studyschedule not found"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1907,6 +2124,107 @@
           "createdBy": {
             "type": "string",
             "description": "createdBy field"
+          }
+        }
+      },
+      "Studyschedule": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "MongoDB ObjectId"
+          },
+          "calendar": {
+            "type": "string",
+            "format": "date-time",
+            "description": "calendar field"
+          },
+          "title": {
+            "type": "string",
+            "description": "title field"
+          },
+          "description": {
+            "type": "string",
+            "description": "description field"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "createdBy reference ID"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "description": "isDeleted field"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": [
+          "_id",
+          "calendar",
+          "title"
+        ]
+      },
+      "StudyscheduleCreate": {
+        "type": "object",
+        "properties": {
+          "calendar": {
+            "type": "string",
+            "format": "date-time",
+            "description": "calendar field"
+          },
+          "title": {
+            "type": "string",
+            "description": "title field"
+          },
+          "description": {
+            "type": "string",
+            "description": "description field"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "createdBy reference ID"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "description": "isDeleted field"
+          }
+        },
+        "required": [
+          "calendar",
+          "title"
+        ]
+      },
+      "StudyscheduleUpdate": {
+        "type": "object",
+        "properties": {
+          "calendar": {
+            "type": "string",
+            "format": "date-time",
+            "description": "calendar field"
+          },
+          "title": {
+            "type": "string",
+            "description": "title field"
+          },
+          "description": {
+            "type": "string",
+            "description": "description field"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "createdBy reference ID"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "description": "isDeleted field"
           }
         }
       }

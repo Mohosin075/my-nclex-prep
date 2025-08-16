@@ -25,7 +25,7 @@ const auth =
             config.jwt.jwt_secret as Secret,
           )
 
-          
+
           // Set user to header
           req.user = verifyUser
 
