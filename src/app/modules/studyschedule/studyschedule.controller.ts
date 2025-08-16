@@ -69,7 +69,7 @@ const getAllStudyschedules = catchAsync(async (req: Request, res: Response) => {
 
 const deleteStudyschedule = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await StudyscheduleServices.deleteStudyschedule(id);
+  const result = await StudyscheduleServices.deleteStudyschedule(id, req.user!);
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
