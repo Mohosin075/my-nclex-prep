@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '../../../errors/ApiError';
 import { IStudyscheduleFilterables, IStudyschedule } from './studyschedule.interface';
 import { Studyschedule } from './studyschedule.model';
-import { JwtPayload } from 'jsonwebtoken';
+import { Jwt, JwtPayload } from 'jsonwebtoken';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { studyscheduleSearchableFields } from './studyschedule.constants';
@@ -145,10 +145,25 @@ const deleteStudyschedule = async (id: string): Promise<IStudyschedule> => {
   return result;
 };
 
+const getSchedulesByDate = async (user: JwtPayload | undefined, date: string) => {
+  const dayStart = new Date(date)
+  dayStart.setHours(0, 0, 0, 0)
+
+  const dayEnd = new Date(date)
+  dayEnd.setHours(23, 59, 59, 999)
+
+  return await Studyschedule.find({
+    createdBy: user?.authId,
+    calendar: { $gte: dayStart, $lte: dayEnd },
+    isDeleted: false,
+  }).lean()
+}
+
 export const StudyscheduleServices = {
   createStudyschedule,
   getAllStudyschedules,
   getSingleStudyschedule,
   updateStudyschedule,
   deleteStudyschedule,
+  getSchedulesByDate
 };
