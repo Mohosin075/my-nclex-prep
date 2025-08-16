@@ -18,6 +18,12 @@ router.get(
 )
 
 router.get(
+  '/study-guide',
+  auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
+  StudymaterialController.getAllStudyGuides,
+)
+
+router.get(
   '/:id',
   auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
   StudymaterialController.getSingleStudymaterial,
