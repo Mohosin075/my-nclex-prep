@@ -1,58 +1,62 @@
-import { StatusCodes } from 'http-status-codes';
-import ApiError from '../../../errors/ApiError';
-import { IStudyscheduleFilterables, IStudyschedule } from './studyschedule.interface';
-import { Studyschedule } from './studyschedule.model';
-import { Jwt, JwtPayload } from 'jsonwebtoken';
-import { IPaginationOptions } from '../../../interfaces/pagination';
-import { paginationHelper } from '../../../helpers/paginationHelper';
-import { studyscheduleSearchableFields } from './studyschedule.constants';
-import { Types } from 'mongoose';
-
+import { StatusCodes } from 'http-status-codes'
+import ApiError from '../../../errors/ApiError'
+import {
+  IStudyscheduleFilterables,
+  IStudyschedule,
+} from './studyschedule.interface'
+import { Studyschedule } from './studyschedule.model'
+import { Jwt, JwtPayload } from 'jsonwebtoken'
+import { IPaginationOptions } from '../../../interfaces/pagination'
+import { paginationHelper } from '../../../helpers/paginationHelper'
+import { studyscheduleSearchableFields } from './studyschedule.constants'
+import { Types } from 'mongoose'
 
 const createStudyschedule = async (
   user: JwtPayload,
-  payload: IStudyschedule
+  payload: IStudyschedule,
 ): Promise<IStudyschedule> => {
   try {
-    const result = await Studyschedule.create({ ...payload , createdBy: user.authId });
+    const result = await Studyschedule.create({
+      ...payload,
+      createdBy: user.authId,
+    })
     if (!result) {
-
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        'Failed to create Studyschedule, please try again with valid data.'
-      );
+        'Failed to create Studyschedule, please try again with valid data.',
+      )
     }
 
-    return result;
+    return result
   } catch (error: any) {
-
     if (error.code === 11000) {
-      throw new ApiError(StatusCodes.CONFLICT, 'Duplicate entry found');
+      throw new ApiError(StatusCodes.CONFLICT, 'Duplicate entry found')
     }
-    throw error;
+    throw error
   }
-};
+}
 
 const getAllStudyschedules = async (
   user: JwtPayload,
   filterables: IStudyscheduleFilterables,
-  pagination: IPaginationOptions
+  pagination: IPaginationOptions,
 ) => {
-  const { searchTerm, ...filterData } = filterables;
-  const { page, skip, limit, sortBy, sortOrder } = paginationHelper.calculatePagination(pagination);
+  const { searchTerm, ...filterData } = filterables
+  const { page, skip, limit, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(pagination)
 
-  const andConditions = [];
+  const andConditions = []
 
   // Search functionality
   if (searchTerm) {
     andConditions.push({
-      $or: studyscheduleSearchableFields.map((field) => ({
+      $or: studyscheduleSearchableFields.map(field => ({
         [field]: {
           $regex: searchTerm,
           $options: 'i',
         },
       })),
-    });
+    })
   }
 
   // Filter functionality
@@ -61,19 +65,19 @@ const getAllStudyschedules = async (
       $and: Object.entries(filterData).map(([key, value]) => ({
         [key]: value,
       })),
-    });
+    })
   }
 
-  const whereConditions = andConditions.length ? { $and: andConditions } : {};
+  const whereConditions = andConditions.length ? { $and: andConditions } : {}
 
   const [result, total] = await Promise.all([
-    Studyschedule
-      .find(whereConditions)
+    Studyschedule.find(whereConditions)
       .skip(skip)
       .limit(limit)
-      .sort({ [sortBy]: sortOrder }).populate('createdBy'),
+      .sort({ [sortBy]: sortOrder })
+      .populate('createdBy'),
     Studyschedule.countDocuments(whereConditions),
-  ]);
+  ])
 
   return {
     meta: {
@@ -83,31 +87,31 @@ const getAllStudyschedules = async (
       totalPages: Math.ceil(total / limit),
     },
     data: result,
-  };
-};
+  }
+}
 
 const getSingleStudyschedule = async (id: string): Promise<IStudyschedule> => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyschedule ID');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyschedule ID')
   }
 
-  const result = await Studyschedule.findById(id).populate('createdBy');
+  const result = await Studyschedule.findById(id).populate('createdBy')
   if (!result) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Requested studyschedule not found, please try again with valid id'
-    );
+      'Requested studyschedule not found, please try again with valid id',
+    )
   }
 
-  return result;
-};
+  return result
+}
 
 const updateStudyschedule = async (
   id: string,
-  payload: Partial<IStudyschedule>
+  payload: Partial<IStudyschedule>,
 ): Promise<IStudyschedule | null> => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyschedule ID');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyschedule ID')
   }
 
   const result = await Studyschedule.findByIdAndUpdate(
@@ -116,36 +120,57 @@ const updateStudyschedule = async (
     {
       new: true,
       runValidators: true,
-    }
-  ).populate('createdBy');
+    },
+  ).populate('createdBy')
 
   if (!result) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Requested studyschedule not found, please try again with valid id'
-    );
+      'Requested studyschedule not found, please try again with valid id',
+    )
   }
 
-  return result;
-};
+  return result
+}
 
-const deleteStudyschedule = async (id: string): Promise<IStudyschedule> => {
+const deleteStudyschedule = async (
+  id: string,
+  user: JwtPayload,
+): Promise<IStudyschedule> => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyschedule ID');
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyschedule ID')
   }
 
-  const result = await Studyschedule.findByIdAndDelete(id);
+  const isExistSchedule = await Studyschedule.findById(id)
+  if (!isExistSchedule) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Requested studyschedule not found, please try again with valid id',
+    )
+  }
+
+  if (isExistSchedule.createdBy.toString() !== user?.authId) {
+    throw new ApiError(
+      StatusCodes.UNAUTHORIZED,
+      'You are not authorized to delete this studyschedule.',
+    )
+  }
+
+  const result = await Studyschedule.findByIdAndDelete(id)
   if (!result) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Something went wrong while deleting studyschedule, please try again with valid id.'
-    );
+      'Something went wrong while deleting studyschedule, please try again with valid id.',
+    )
   }
 
-  return result;
-};
+  return result
+}
 
-const getSchedulesByDate = async (user: JwtPayload | undefined, date: string) => {
+const getSchedulesByDate = async (
+  user: JwtPayload | undefined,
+  date: string,
+) => {
   const dayStart = new Date(date)
   dayStart.setHours(0, 0, 0, 0)
 
@@ -165,5 +190,5 @@ export const StudyscheduleServices = {
   getSingleStudyschedule,
   updateStudyschedule,
   deleteStudyschedule,
-  getSchedulesByDate
-};
+  getSchedulesByDate,
+}
