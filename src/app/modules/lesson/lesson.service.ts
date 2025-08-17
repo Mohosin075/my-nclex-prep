@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../../../errors/ApiError'
-import { ILesson, IQuestion, IStem } from './lesson.interface'
+import { ILesson, ILessonFilter, IQuestion, IStem } from './lesson.interface'
 import { Lesson } from './lesson.model'
 import { JwtPayload } from 'jsonwebtoken'
 import { IPaginationOptions } from '../../../interfaces/pagination'
@@ -67,10 +67,13 @@ const createLesson = async (
 
 const getAllLessons = async (
   user: JwtPayload,
-  filterables: any,
+  filterables: ILessonFilter,
   pagination: IPaginationOptions,
 ) => {
   const { searchTerm, ...filterData } = filterables
+
+  console.log({ filterData })
+
   const { page, skip, limit, sortBy, sortOrder } =
     paginationHelper.calculatePagination(pagination)
 
@@ -137,33 +140,6 @@ const getSingleLesson = async (id: string): Promise<ILesson> => {
       model: 'Stem',
     },
   })
-
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested lesson not found, please try again with valid id',
-    )
-  }
-
-  return result
-}
-
-const updateLesson = async (
-  id: string,
-  payload: Partial<ILesson>,
-): Promise<ILesson | null> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Lesson ID')
-  }
-
-  const result = await Lesson.findByIdAndUpdate(
-    new Types.ObjectId(id),
-    { $set: payload },
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
 
   if (!result) {
     throw new ApiError(

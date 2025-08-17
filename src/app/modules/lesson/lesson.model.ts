@@ -23,7 +23,7 @@ export const Question = model<IQuestion>('Question', QuestionSchema)
 const LessonSchema = new Schema<ILesson>(
   {
     title: { type: String, required: true },
-    category: { type: String, enum: ['case', 'nextgen'], required: true },
+    category: { type: String, enum: ['case_study', 'next_gen'], required: true },
     lessonType: {
       type: String,
       enum: ['chart', 'video', 'text', 'simulation'],

@@ -1,5 +1,12 @@
 import { Model, Types } from 'mongoose'
 
+export interface ILessonFilter {
+  title?: string
+  category?: 'case_study' | 'next_gen'
+  lessonType?: 'chart' | 'video' | 'text' | 'simulation'
+  searchTerm?: string
+}
+
 // Stem model
 export interface IStem {
   _id?: string
@@ -22,7 +29,7 @@ export interface IQuestion {
 export interface ILesson {
   _id?: string
   title: string
-  category: 'case' | 'nextgen'
+  category: 'case_study' | 'next_gen'
   lessonType: 'chart' | 'video' | 'text' | 'simulation'
   questions: string[] // Array of Question ObjectIds
   createdAt: Date
