@@ -178,6 +178,34 @@ const updateStem = async (
   return result
 }
 
+
+const updateLesson = async (
+  id: string,
+  payload: Partial<ILesson>,
+): Promise<ILesson | null> => {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Lesson ID')
+  }
+
+  const result = await Lesson.findByIdAndUpdate(
+    new Types.ObjectId(id),
+    { $push: { questions: { $each: payload.questions } } },
+    { new: true, runValidators: true }
+  ).populate({
+    path: 'questions',
+    populate: { path: 'stems', model: 'Stem' },
+  })
+
+  if (!result) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Requested lesson not found, please try again with valid id',
+    )
+  }
+
+  return result
+}
+
 const updateQuestion = async (
   id: string,
   payload: Partial<IQuestion>,
@@ -270,4 +298,5 @@ export const LessonServices = {
   deleteLesson,
   updateStem,
   updateQuestion,
+  updateLesson
 }
