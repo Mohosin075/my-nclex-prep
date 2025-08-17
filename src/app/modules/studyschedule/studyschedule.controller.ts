@@ -69,7 +69,7 @@ const getAllStudyschedules = catchAsync(async (req: Request, res: Response) => {
 
 const deleteStudyschedule = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await StudyscheduleServices.deleteStudyschedule(id);
+  const result = await StudyscheduleServices.deleteStudyschedule(id, req.user!);
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -79,10 +79,24 @@ const deleteStudyschedule = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const getSchedulesByDate = catchAsync(async (req: Request, res: Response) => {
+  const { date } = req.query as { date: string }
+
+  const result = await StudyscheduleServices.getSchedulesByDate(req.user, date)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Study schedules fetched successfully',
+    data: result,
+  })
+})
+
 export const StudyscheduleController = {
   createStudyschedule,
   updateStudyschedule,
   getSingleStudyschedule,
   getAllStudyschedules,
   deleteStudyschedule,
+  getSchedulesByDate
 };
