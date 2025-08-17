@@ -50,6 +50,21 @@ const updateQuestion = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+
+const updateLesson = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const lessonData = req.body
+
+  const result = await LessonServices.updateLesson(id, lessonData)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Lesson updated successfully',
+    data: result,
+  })
+})
+
 const getSingleLesson = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params
   const result = await LessonServices.getSingleLesson(id)
@@ -119,6 +134,7 @@ export const LessonControllers = {
   createLesson,
   updateStem,
   updateQuestion,
+  updateLesson,
   getSingleLesson,
   getAllLessons,
   deleteLesson,
