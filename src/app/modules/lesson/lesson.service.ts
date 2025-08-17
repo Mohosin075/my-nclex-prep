@@ -1,10 +1,15 @@
+import { StatusCodes } from 'http-status-codes'
+import ApiError from '../../../errors/ApiError'
+import { ILesson, IQuestion, IStem } from './lesson.interface'
+import { Lesson } from './lesson.model'
+import { JwtPayload } from 'jsonwebtoken'
+import { IPaginationOptions } from '../../../interfaces/pagination'
+import { paginationHelper } from '../../../helpers/paginationHelper'
+import { lessonSearchableFields } from './lesson.constants'
+import mongoose, { Types } from 'mongoose'
 import { Stem, Question } from './lesson.model'
 // Create Stem
-export const createStem = async (payload: {
-  stemTitle: string
-  stemDescription?: string
-  stemPicture?: string
-}) => {
+export const createStem = async (payload: IStem) => {
   const stem = await Stem.create(payload)
   if (!stem) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Stem')
@@ -13,49 +18,51 @@ export const createStem = async (payload: {
 }
 
 // Create Question
-export const createQuestion = async (payload: {
-  questionText: string
-  options: string[]
-  correctAnswer: string
-  explanation: string
-  stems: string[]
-}) => {
+export const createQuestion = async (payload: IQuestion) => {
+  const stemCount = await Stem.countDocuments({ _id: { $in: payload.stems } })
+
+  if (stemCount !== payload.stems.length) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'One or more Stem IDs are invalid',
+    )
+  }
+
   const question = await Question.create(payload)
   if (!question) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Question')
   }
+
   return question
 }
-import { StatusCodes } from 'http-status-codes'
-import ApiError from '../../../errors/ApiError'
-import { ILesson } from './lesson.interface'
-import { Lesson } from './lesson.model'
-import { JwtPayload } from 'jsonwebtoken'
-import { IPaginationOptions } from '../../../interfaces/pagination'
-import { paginationHelper } from '../../../helpers/paginationHelper'
-import { lessonSearchableFields } from './lesson.constants'
-import { Types } from 'mongoose'
 
 const createLesson = async (
   user: JwtPayload,
   payload: ILesson,
 ): Promise<ILesson> => {
-  try {
-    const result = await Lesson.create(payload)
-    if (!result) {
+  if (payload.questions && payload.questions.length > 0) {
+    const questionCount = await Question.countDocuments({
+      _id: { $in: payload.questions },
+    })
+
+    if (questionCount !== payload.questions.length) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        'Failed to create Lesson, please try again with valid data.',
+        'One or more Question IDs are invalid',
       )
     }
-
-    return result
-  } catch (error: any) {
-    if (error.code === 11000) {
-      throw new ApiError(StatusCodes.CONFLICT, 'Duplicate entry found')
-    }
-    throw error
   }
+
+  const result = await Lesson.create(payload)
+
+  if (!result) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Failed to create Lesson, please try again with valid data.',
+    )
+  }
+
+  return result
 }
 
 const getAllLessons = async (
@@ -69,7 +76,7 @@ const getAllLessons = async (
 
   const andConditions = []
 
-  // Search functionality
+  // 🔍 Search functionality
   if (searchTerm) {
     andConditions.push({
       $or: lessonSearchableFields.map(field => ({
@@ -81,7 +88,7 @@ const getAllLessons = async (
     })
   }
 
-  // Filter functionality
+  // 🔎 Filter functionality
   if (Object.keys(filterData).length) {
     andConditions.push({
       $and: Object.entries(filterData).map(([key, value]) => ({
@@ -96,7 +103,14 @@ const getAllLessons = async (
     Lesson.find(whereConditions)
       .skip(skip)
       .limit(limit)
-      .sort({ [sortBy]: sortOrder }),
+      .sort({ [sortBy]: sortOrder })
+      .populate({
+        path: 'questions',
+        populate: {
+          path: 'stems',
+          model: 'Stem',
+        },
+      }),
     Lesson.countDocuments(whereConditions),
   ])
 
@@ -116,7 +130,14 @@ const getSingleLesson = async (id: string): Promise<ILesson> => {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Lesson ID')
   }
 
-  const result = await Lesson.findById(id)
+  const result = await Lesson.findById(id).populate({
+    path: 'questions',
+    populate: {
+      path: 'stems',
+      model: 'Stem',
+    },
+  })
+
   if (!result) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
@@ -154,26 +175,123 @@ const updateLesson = async (
   return result
 }
 
-const deleteLesson = async (id: string): Promise<ILesson> => {
+const updateStem = async (
+  id: string,
+  payload: Partial<IStem>,
+): Promise<IStem | null> => {
   if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Lesson ID')
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Stem ID')
   }
 
-  const result = await Lesson.findByIdAndDelete(id)
+  const result = await Stem.findByIdAndUpdate(
+    new Types.ObjectId(id),
+    { $set: payload },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+
   if (!result) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      'Something went wrong while deleting lesson, please try again with valid id.',
+      'Requested stem not found, please try again with valid id',
     )
   }
 
   return result
 }
 
+const updateQuestion = async (
+  id: string,
+  payload: Partial<IQuestion>,
+): Promise<IQuestion | null> => {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Question ID')
+  }
+
+  const result = await Question.findByIdAndUpdate(
+    new Types.ObjectId(id),
+    { $set: payload },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+
+  if (!result) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'Requested question not found, please try again with valid id',
+    )
+  }
+
+  return result
+}
+
+const deleteLesson = async (id: string) => {
+  const session = await mongoose.startSession()
+  session.startTransaction()
+
+  try {
+    // ✅ Step 1: Aggregate lesson with questions + stems
+    const lessonAgg = await Lesson.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: 'questions',
+          localField: 'questions',
+          foreignField: '_id',
+          as: 'questions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'stems',
+          localField: 'questions.stems',
+          foreignField: '_id',
+          as: 'stems',
+        },
+      },
+    ]).session(session)
+
+    if (!lessonAgg.length) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Lesson not found')
+    }
+
+    const lesson = lessonAgg[0]
+
+    //  Step 2: Collect Question IDs & Stem IDs
+    const questionIds = lesson.questions.map((q: any) => q._id)
+    const stemIds = lesson.stems.map((s: any) => s._id)
+
+    //  Step 3: Delete stems
+    if (stemIds.length) {
+      await Stem.deleteMany({ _id: { $in: stemIds } }, { session })
+    }
+
+    //  Step 4: Delete questions
+    if (questionIds.length) {
+      await Question.deleteMany({ _id: { $in: questionIds } }, { session })
+    }
+    await Lesson.findByIdAndDelete(id, { session })
+
+    await session.commitTransaction()
+    session.endSession()
+
+    return lesson
+  } catch (err) {
+    await session.abortTransaction()
+    session.endSession()
+    throw err
+  }
+}
+
 export const LessonServices = {
   createLesson,
   getAllLessons,
   getSingleLesson,
-  updateLesson,
   deleteLesson,
+  updateStem,
+  updateQuestion,
 }

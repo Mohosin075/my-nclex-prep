@@ -40,3 +40,28 @@ export const LessonCreateSchema = z.object({
 
 // 🔹 Type inference for creation
 export type LessonCreateInput = z.infer<typeof LessonCreateSchema>
+
+// 🔹 Stem Schema (for update)
+export const StemUpdateSchema = z.object({
+  body: z.object({
+    stemTitle: z.string().min(1).optional(),
+    stemDescription: z.string().optional(),
+    stemPicture: z.string().optional(),
+  }),
+})
+
+// 🔹 Question Schema (for update)
+export const QuestionUpdateSchema = z.object({
+  body: z.object({
+    questionText: z.string().min(1).optional(),
+    options: z
+      .array(z.string())
+      .min(2, 'Each question must have at least 2 options')
+      .optional(),
+    correctAnswer: z.string().min(1).optional(),
+    explanation: z.string().optional(),
+    stems: z.array(z.string().regex(/^[a-fA-F0-9]{24}$/)).optional(), // ObjectId strings
+  }),
+})
+
+

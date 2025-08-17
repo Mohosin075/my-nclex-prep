@@ -7,6 +7,7 @@ import { createStem, createQuestion } from './lesson.service'
 import pick from '../../../shared/pick'
 import { lessonFilterables } from './lesson.constants'
 import { paginationFields } from '../../../interfaces/pagination'
+import ApiError from '../../../errors/ApiError'
 
 const createLesson = catchAsync(async (req: Request, res: Response) => {
   const lessonData = req.body
@@ -21,16 +22,30 @@ const createLesson = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
-const updateLesson = catchAsync(async (req: Request, res: Response) => {
+const updateStem = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params
-  const lessonData = req.body
+  const stemData = req.body
 
-  const result = await LessonServices.updateLesson(id, lessonData)
+  const result = await LessonServices.updateStem(id, stemData)
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Lesson updated successfully',
+    message: 'Stem updated successfully',
+    data: result,
+  })
+})
+
+const updateQuestion = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params
+  const questionData = req.body
+
+  const result = await LessonServices.updateQuestion(id, questionData)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Question updated successfully',
     data: result,
   })
 })
@@ -102,7 +117,8 @@ const deleteLesson = catchAsync(async (req: Request, res: Response) => {
 
 export const LessonControllers = {
   createLesson,
-  updateLesson,
+  updateStem,
+  updateQuestion,
   getSingleLesson,
   getAllLessons,
   deleteLesson,
