@@ -7,7 +7,7 @@ export enum QuestionType {
   DROPDOWN = 'dropdown',
   NUMBER = 'number',
   REARRANGE = 'rearrange',
-} 
+}
 
 export interface Option {
   _id?: string
@@ -23,8 +23,10 @@ export interface Question {
   type: QuestionType
 
   // Step 01 : Stem
-  stemTitle?: string
-  stemDescription?: string
+  stems?: {
+    stemTitle?: string
+    stemDescription?: string
+  }[]
 
   // Step 02 : Question
   title: string // e.g., “Which apply?”
@@ -58,7 +60,7 @@ export interface ExamStats {
 export interface Exam {
   _id?: string
   name: string // “Readiness Exam 01”
-  code?: string // slug/shortcode
+  code?: string 
   description?: string
   isPublished: boolean
 

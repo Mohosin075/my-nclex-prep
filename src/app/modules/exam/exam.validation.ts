@@ -13,8 +13,14 @@ const optionZ = z.object({
 export const questionZ = z
   .object({
     type: z.nativeEnum(QuestionType),
-    stemTitle: z.string().optional(),
-    stemDescription: z.string().optional(),
+    stems: z
+      .array(
+        z.object({
+          stemTitle: z.string().optional(),
+          stemDescription: z.string().optional(),
+        }),
+      )
+      .optional(),
     title: z.string().min(1),
 
     // MCQ
