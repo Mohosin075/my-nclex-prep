@@ -1,0 +1,129 @@
+{
+  "info": {
+    "name": "Lesson API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Lesson",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"sample_title\",\n  \"category\": \"sample_category\",\n  \"lessonType\": \"sample_lessonType\",\n  \"questions\": [\n    {\n      \"questionText\": \"sample_questionText\",\n      \"options\": [\n        \"sample_options_item\"\n      ],\n      \"string\": \"sample_string\",\n      \"array\": {\n        \"key\": \"value\"\n      },\n      \"stemTitle\": \"sample_stemTitle\",\n      \"stemDescription\": \"sample_stemDescription\",\n      \"stemPicture\": \"sample_stemPicture\"\n    }\n  ],\n  \"createdAt\": \"2025-08-17T17:55:32.421Z\",\n  \"updatedAt\": \"2025-08-17T17:55:32.422Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/lesson",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lesson"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get All Lessons",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/lesson",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lesson"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Lesson by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/lesson/{{lesson_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lesson",
+            "{{lesson_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Lesson",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"sample_title\",\n  \"category\": \"sample_category\",\n  \"lessonType\": \"sample_lessonType\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/lesson/{{lesson_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lesson",
+            "{{lesson_id}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete Lesson",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/lesson/{{lesson_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "lesson",
+            "{{lesson_id}}"
+          ]
+        }
+      }
+    }
+  ]
+}
