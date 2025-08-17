@@ -2162,7 +2162,9 @@
           }
         },
         "required": [
-          "_id"
+          "_id",
+          "questionText",
+          "stemTitle"
         ]
       },
       "Exam": {
