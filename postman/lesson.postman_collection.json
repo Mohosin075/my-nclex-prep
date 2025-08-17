@@ -16,7 +16,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"sample_title\",\n  \"category\": \"sample_category\",\n  \"lessonType\": \"sample_lessonType\",\n  \"questions\": [\n    {\n      \"questionText\": \"sample_questionText\",\n      \"options\": [\n        \"sample_options_item\"\n      ],\n      \"string\": \"sample_string\",\n      \"array\": {\n        \"key\": \"value\"\n      },\n      \"stemTitle\": \"sample_stemTitle\",\n      \"stemDescription\": \"sample_stemDescription\",\n      \"stemPicture\": \"sample_stemPicture\"\n    }\n  ],\n  \"createdAt\": \"2025-08-17T17:55:32.421Z\",\n  \"updatedAt\": \"2025-08-17T17:55:32.422Z\"\n}",
+          "raw": "{\n  \"title\": \"sample_title\",\n  \"category\": \"sample_category\",\n  \"lessonType\": \"sample_lessonType\",\n  \"questions\": [\n    {\n      \"questionText\": \"sample_questionText\",\n      \"options\": [\n        \"sample_options_item\"\n      ],\n      \"string\": \"sample_string\",\n      \"array\": {\n        \"key\": \"value\"\n      },\n      \"stemTitle\": \"sample_stemTitle\",\n      \"stemDescription\": \"sample_stemDescription\",\n      \"stemPicture\": \"sample_stemPicture\"\n    }\n  ],\n  \"createdAt\": \"2025-08-17T18:25:09.263Z\",\n  \"updatedAt\": \"2025-08-17T18:25:09.263Z\"\n}",
           "options": {
             "raw": {
               "language": "json"
