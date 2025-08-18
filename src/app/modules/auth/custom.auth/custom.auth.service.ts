@@ -126,8 +126,8 @@ const adminLogin = async (payload: ILoginData):Promise<IAuthResponse> => {
       'Please try again with correct credentials.',
     )
   }
-  
-  //tokens 
+
+  //tokens
   const tokens = AuthHelper.createToken(isUserExist._id, isUserExist.role, isUserExist.name!, isUserExist.email!)
 
   return authResponse(StatusCodes.OK, `Welcome back ${isUserExist.name}`, isUserExist.role, tokens.accessToken, tokens.refreshToken)
@@ -165,7 +165,7 @@ const forgetPassword = async (email?: string, phone?: string) => {
     requestCount: 1,
     authType: 'resetPassword',
   }
-  
+
   await User.findByIdAndUpdate(
     isUserExist._id,
     {
@@ -173,7 +173,7 @@ const forgetPassword = async (email?: string, phone?: string) => {
     },
     { new: true },
   )
-  
+
 
     // //send otp to user
   if (email) {
@@ -199,7 +199,7 @@ const resetPassword = async (resetToken: string, payload: IResetPassword) => {
   }
   console.log({ newPassword, confirmPassword })
   const isTokenExist = await Token.findOne({ token: resetToken }).lean()
-  
+
   if (!isTokenExist) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
@@ -534,7 +534,7 @@ const resendOtp = async (email:string, authType:'createAccount' | 'resetPassword
     // emailQueue.add('emails', forgetPasswordEmailTemplate)
   }
 
-  
+
 
   return 'OTP sent successfully.'
 }
