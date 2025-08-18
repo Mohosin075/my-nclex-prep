@@ -1,4 +1,3 @@
-
 import { UserRoutes } from '../app/modules/user/user.route'
 import { AuthRoutes } from '../app/modules/auth/auth.route'
 import express, { Router } from 'express'
@@ -9,7 +8,6 @@ import { OnboardingscreenRoutes } from '../app/modules/onboardingscreen/onboardi
 import { CommunityRoutes } from '../app/modules/community/community.route'
 import { ReviewRoutes } from '../app/modules/review/review.route'
 import { StudymaterialRoutes } from '../app/modules/studymaterial/studymaterial.route'
-import { ExamRoutes } from '../app/modules/exam/exam.route'
 import { StudyscheduleRoutes } from '../app/modules/studyschedule/studyschedule.route'
 import { LessonRoutes } from '../app/modules/lesson/lesson.route'
 
@@ -19,7 +17,6 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/user', route: UserRoutes },
   { path: '/auth', route: AuthRoutes },
 
-
   { path: '/notifications', route: NotificationRoutes },
 
   { path: '/public', route: PublicRoutes },
@@ -27,13 +24,11 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/support', route: SupportRoutes },
   { path: '/onboardingscreen', route: OnboardingscreenRoutes },
   { path: '/community', route: CommunityRoutes },
-  { path: '/review', route: ReviewRoutes }
-
-,
+  { path: '/review', route: ReviewRoutes },
   { path: '/studymaterial', route: StudymaterialRoutes },
-  { path: '/exam', route: ExamRoutes },
   { path: '/studyschedule', route: StudyscheduleRoutes },
-  { path: '/lesson', route: LessonRoutes }]
+  { path: '/lesson', route: LessonRoutes },
+]
 
 apiRoutes.forEach(route => {
   router.use(route.path, route.route)
