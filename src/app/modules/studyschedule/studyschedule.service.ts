@@ -181,7 +181,7 @@ const getSchedulesByDate = async (
     createdBy: user?.authId,
     calendar: { $gte: dayStart, $lte: dayEnd },
     isDeleted: false,
-  }).lean()
+  }).populate('createdBy').lean()
 }
 
 export const StudyscheduleServices = {

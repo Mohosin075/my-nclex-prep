@@ -20,7 +20,8 @@ export interface IQuestion {
   _id?: string
   questionText: string
   options: string[]
-  correctAnswer: string
+  // store correct answer as index into `options` array
+  correctAnswer: number
   explanation: string
   stems: string[] // Array of Stem ObjectIds
 }
