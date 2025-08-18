@@ -1,4 +1,3 @@
-
 import { UserRoutes } from '../app/modules/user/user.route'
 import { AuthRoutes } from '../app/modules/auth/auth.route'
 import express, { Router } from 'express'
@@ -18,7 +17,6 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/user', route: UserRoutes },
   { path: '/auth', route: AuthRoutes },
 
-
   { path: '/notifications', route: NotificationRoutes },
 
   { path: '/public', route: PublicRoutes },
@@ -26,12 +24,11 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/support', route: SupportRoutes },
   { path: '/onboardingscreen', route: OnboardingscreenRoutes },
   { path: '/community', route: CommunityRoutes },
-  { path: '/review', route: ReviewRoutes }
-
-,
+  { path: '/review', route: ReviewRoutes },
   { path: '/studymaterial', route: StudymaterialRoutes },
   { path: '/studyschedule', route: StudyscheduleRoutes },
-  { path: '/lesson', route: LessonRoutes }]
+  { path: '/lesson', route: LessonRoutes },
+]
 
 apiRoutes.forEach(route => {
   router.use(route.path, route.route)
