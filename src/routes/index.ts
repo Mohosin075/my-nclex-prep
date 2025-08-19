@@ -9,7 +9,6 @@ import { CommunityRoutes } from '../app/modules/community/community.route'
 import { ReviewRoutes } from '../app/modules/review/review.route'
 import { StudymaterialRoutes } from '../app/modules/studymaterial/studymaterial.route'
 import { StudyscheduleRoutes } from '../app/modules/studyschedule/studyschedule.route'
-import { LessonRoutes } from '../app/modules/lesson/lesson.route'
 import { ExamRoutes } from '../app/modules/exam/exam.route'
 
 const router = express.Router()
@@ -28,7 +27,6 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/review', route: ReviewRoutes },
   { path: '/studymaterial', route: StudymaterialRoutes },
   { path: '/studyschedule', route: StudyscheduleRoutes },
-  { path: '/lesson', route: LessonRoutes },
   { path: '/exam', route: ExamRoutes },
 ]
 
