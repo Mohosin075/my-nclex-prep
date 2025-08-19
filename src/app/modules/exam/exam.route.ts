@@ -7,7 +7,7 @@ import fileUploadHandler from '../../middleware/fileUploadHandler'
 import { S3Helper } from '../../../helpers/image/s3helper'
 import ApiError from '../../../errors/ApiError'
 import { StatusCodes } from 'http-status-codes'
-import { QuestionSchema, StemSchema } from './exam.validation'
+import { ExamSchema, QuestionSchema, StemSchema } from './exam.validation'
 
 const router = express.Router()
 
@@ -94,7 +94,10 @@ router.route('/questions/:id').patch(
 router
   .route('/')
   .get(auth(USER_ROLES.ADMIN), ExamControllers.getAllExams)
-  .post(auth(USER_ROLES.ADMIN), ExamControllers.createExam)
+  .post(auth(USER_ROLES.ADMIN),
+  validateRequest(ExamSchema),
+
+  ExamControllers.createExam)
 
 router
   .route('/:id')

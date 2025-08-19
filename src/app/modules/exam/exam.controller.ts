@@ -110,8 +110,9 @@ const createStemController = catchAsync(async (req: Request, res: Response) => {
 const createQuestionController = catchAsync(
   async (req: Request, res: Response) => {
     const questionData = req.body
+    const user = req.user!
 
-    const result = await createQuestion(questionData)
+    const result = await createQuestion(questionData, user)
     sendResponse(res, {
       statusCode: StatusCodes.CREATED,
       success: true,

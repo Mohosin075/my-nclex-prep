@@ -7,6 +7,7 @@ import { paginationHelper } from '../../../helpers/paginationHelper'
 import { examSearchableFields } from './exam.constants'
 import mongoose, { Types } from 'mongoose'
 import { Exam, Question, Stem } from './exam.model'
+import { ConfirmStatus } from '../../../enum/exam'
 // Create Stem
 export const createStem = async (payload: IStem[]) => {
   if (!Array.isArray(payload) || payload.length === 0) {
@@ -23,10 +24,18 @@ export const createStem = async (payload: IStem[]) => {
 }
 
 // Create Question
-export const createQuestion = async (payload: IQuestion) => {
+export const createQuestion = async (payload: IQuestion, user: JwtPayload) => {
   if (!Array.isArray(payload) || payload.length === 0) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Question data')
   }
+
+  const status = ConfirmStatus.IN_PROGRESS
+
+  const refId = `${user.authId}_${status}`
+
+  payload.map(p => {
+    p.refId = refId
+  })
 
   const question = await Question.insertMany(payload)
 
@@ -39,30 +48,68 @@ export const createQuestion = async (payload: IQuestion) => {
   return ids
 }
 
-const createExam = async (user: JwtPayload, payload: IExam): Promise<IExam> => {
-  if (payload.questions && payload.questions.length > 0) {
-    const questionCount = await Question.countDocuments({
-      _id: { $in: payload.questions },
-    })
+const createExam = async (user: JwtPayload, payload: IExam) => {
+  const session = await Exam.startSession()
+  session.startTransaction()
 
-    if (questionCount !== payload.questions.length) {
+  try {
+    // in-progress
+    const refId = `${user.authId}_${ConfirmStatus.IN_PROGRESS}`
+
+    const questions = await Question.find({ refId }).session(session)
+
+    if (questions.length === 0) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
-        'One or more Question IDs are invalid',
+        'No questions available for this exam. Please create questions first before creating the exam.',
       )
     }
-  }
 
-  const result = await Exam.create(payload)
+    const ids = questions.map(q => q._id.toString())
 
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Failed to create Exam, please try again with valid data.',
+    const allExams = (await Exam.find({ isPublished: true }).session(session))
+      .length
+
+    payload.questions = ids
+    payload.name = payload.name || `NCLEX Practice Exam - ${allExams + 1}`
+
+    // Create Exam
+    const result = await Exam.create([payload], { session })
+    console.log({ result })
+
+    if (!result || result.length === 0) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        'Failed to create Exam, please try again with valid data.',
+      )
+    }
+
+    const confirm_refId = `${user.authId}_${ConfirmStatus.CONFIRMED}`
+
+    // Update all question statuses after exam creation
+    await Question.updateMany(
+      { _id: { $in: ids } },
+      { $set: { refId: confirm_refId } },
+      { session },
     )
-  }
 
-  return result
+    // Publish the exam
+    const Published = await Exam.findByIdAndUpdate(
+      result[0]._id,
+      { $set: { isPublished: true } },
+      { new: true, session },
+    )
+
+    // Commit transaction
+    await session.commitTransaction()
+    session.endSession()
+
+    return Published
+  } catch (error) {
+    await session.abortTransaction()
+    session.endSession()
+    throw error
+  }
 }
 
 const getAllExams = async (

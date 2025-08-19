@@ -28,6 +28,7 @@ export interface IOption {
 // Question model
 export interface IQuestion {
   _id?: string
+  refId?: string
   type: QuestionType
   stems: string[] // ObjectId refs to Stem
   questionText: string

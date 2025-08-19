@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { defaultStats } from './exam.constants'
 
 // Enums
 export const QuestionTypeEnum = z.enum([
@@ -11,7 +12,7 @@ export const QuestionTypeEnum = z.enum([
   'rearrange',
 ])
 
-export const ExamTypeEnum = z.enum(['readiness', 'standalone', 'practice'])
+export const ExamTypeEnum = z.enum(['readiness', 'standalone'])
 
 // Stem schema
 export const StemSchema = z.object({
@@ -67,23 +68,24 @@ export const ExamStatsSchema = z.object({
   lastAttemptAt: z.string().datetime().optional(),
 })
 
+
+
 // Exam schema (main)
 export const ExamSchema = z.object({
-  category: ExamTypeEnum,
-  name: z.string().min(1, 'Exam name is required'),
-  code: z.string().optional(),
-  description: z.string().optional(),
-  isPublished: z.boolean().optional().default(false),
-  durationMinutes: z.number().optional().default(100),
-  passMark: z.number().optional().default(40),
-  questions: z
-    .array(z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId'))
-    .optional(),
-  stats: ExamStatsSchema.optional(),
-  createdBy: z
-    .string()
-    .regex(/^[0-9a-fA-F]{24}$/, 'Invalid User ObjectId')
-    .optional(),
+  body: z.object({
+    category: ExamTypeEnum,
+    name: z.string().optional(),
+    code: z.string().optional(),
+    description: z.string().optional(),
+    isPublished: z.boolean().optional().default(false),
+    durationMinutes: z.number().optional().default(100),
+    passMark: z.number().optional().default(40),
+    stats: ExamStatsSchema.optional(),
+    createdBy: z
+      .string()
+      .regex(/^[0-9a-fA-F]{24}$/, 'Invalid User ObjectId')
+      .optional(),
+  }),
 })
 
 export type ExamBody = z.infer<typeof ExamSchema>
