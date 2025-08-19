@@ -95,6 +95,9 @@ const getAllExams = catchAsync(async (req: Request, res: Response) => {
 
 const createStemController = catchAsync(async (req: Request, res: Response) => {
   const stemData = req.body
+
+  console.log({stemData})
+
   const result = await createStem(stemData)
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
@@ -107,6 +110,7 @@ const createStemController = catchAsync(async (req: Request, res: Response) => {
 const createQuestionController = catchAsync(
   async (req: Request, res: Response) => {
     const questionData = req.body
+
     const result = await createQuestion(questionData)
     sendResponse(res, {
       statusCode: StatusCodes.CREATED,

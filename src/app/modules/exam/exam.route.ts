@@ -43,44 +43,53 @@ const handleStemImageUpload = async (req: any, res: any, next: any) => {
 // --------------------
 // Stems routes
 // --------------------
-router
-  .route('/stems')
-  .post(
-    auth(USER_ROLES.ADMIN),
-    fileUploadHandler(),
-    handleStemImageUpload,
-    // validateRequest(StemCreateSchema),
-    ExamControllers.createStem,
-  )
+router.route('/stems').post(
+  auth(USER_ROLES.ADMIN),
 
-router
-  .route('/stems/:id')
-  .patch(
-    auth(USER_ROLES.ADMIN),
-    fileUploadHandler(),
-    handleStemImageUpload,
-    // validateRequest(StemUpdateSchema),
-    ExamControllers.updateStem,
-  )
+  (req, res, next) => {
+    const payload = req.body
+
+    req.body = payload.stems
+
+    next()
+  },
+
+  // fileUploadHandler(),
+  // handleStemImageUpload,
+  // validateRequest(StemCreateSchema),
+  ExamControllers.createStem,
+)
+
+router.route('/stems/:id').patch(
+  auth(USER_ROLES.ADMIN),
+  fileUploadHandler(),
+  handleStemImageUpload,
+  // validateRequest(StemUpdateSchema),
+  ExamControllers.updateStem,
+)
 
 // --------------------
 // Questions routes
 // --------------------
-router
-  .route('/questions')
-  .post(
-    auth(USER_ROLES.ADMIN),
-    // validateRequest(QuestionCreateSchema),
-    ExamControllers.createQuestion,
-  )
+router.route('/questions').post(
+  auth(USER_ROLES.ADMIN),
 
-router
-  .route('/questions/:id')
-  .patch(
-    auth(USER_ROLES.ADMIN),
-    // validateRequest(QuestionUpdateSchema),
-    ExamControllers.updateQuestion,
-  )
+  (req, res, next) => {
+    const payload = req.body
+
+    req.body = payload.questions
+    next()
+  },
+
+  // validateRequest(QuestionCreateSchema),
+  ExamControllers.createQuestion,
+)
+
+router.route('/questions/:id').patch(
+  auth(USER_ROLES.ADMIN),
+  // validateRequest(QuestionUpdateSchema),
+  ExamControllers.updateQuestion,
+)
 
 // --------------------
 // Exams routes

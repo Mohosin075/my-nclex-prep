@@ -8,31 +8,35 @@ import { examSearchableFields } from './exam.constants'
 import mongoose, { Types } from 'mongoose'
 import { Exam, Question, Stem } from './exam.model'
 // Create Stem
-export const createStem = async (payload: IStem) => {
-  const stem = await Stem.create(payload)
-  if (!stem) {
+export const createStem = async (payload: IStem[]) => {
+  if (!Array.isArray(payload) || payload.length === 0) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Stem data')
+  }
+
+  const createdStems = await Stem.insertMany(payload)
+
+  if (!createdStems) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Stem')
   }
-  return stem
+  const stemIds = createdStems.map(stem => stem._id)
+  return stemIds
 }
 
 // Create Question
 export const createQuestion = async (payload: IQuestion) => {
-  const stemCount = await Stem.countDocuments({ _id: { $in: payload.stems } })
-
-  if (stemCount !== payload.stems.length) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'One or more Stem IDs are invalid',
-    )
+  if (!Array.isArray(payload) || payload.length === 0) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Question data')
   }
 
-  const question = await Question.create(payload)
+  const question = await Question.insertMany(payload)
+
   if (!question) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Question')
   }
 
-  return question
+  const ids = question.map(q => q._id)
+
+  return ids
 }
 
 const createExam = async (user: JwtPayload, payload: IExam): Promise<IExam> => {
