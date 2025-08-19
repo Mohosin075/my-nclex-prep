@@ -12,3 +12,9 @@ export enum ExamType {
   READINESS = 'readiness',
   STANDALONE = 'standalone',
 }
+
+export enum ConfirmStatus {
+  IN_PROGRESS = 'in-progress',
+  CONFIRMED = 'confirmed',
+  REJECTED = 'rejected',
+}

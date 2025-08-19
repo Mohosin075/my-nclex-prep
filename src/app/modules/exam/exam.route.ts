@@ -7,6 +7,7 @@ import fileUploadHandler from '../../middleware/fileUploadHandler'
 import { S3Helper } from '../../../helpers/image/s3helper'
 import ApiError from '../../../errors/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { ExamSchema, QuestionSchema, StemSchema } from './exam.validation'
 
 const router = express.Router()
 
@@ -34,17 +35,13 @@ const handleStemImageUpload = async (req: any, res: any, next: any) => {
   }
 }
 
-// for delete stems
-// route ---> /deleteStem/questions/:id/stems/:stemId
-
-// for delete questions
-// route ---> /deleteQuestion/exams/:id/questions/:id
-
 // --------------------
 // Stems routes
 // --------------------
 router.route('/stems').post(
   auth(USER_ROLES.ADMIN),
+
+  validateRequest(StemSchema),
 
   (req, res, next) => {
     const payload = req.body
@@ -73,6 +70,7 @@ router.route('/stems/:id').patch(
 // --------------------
 router.route('/questions').post(
   auth(USER_ROLES.ADMIN),
+  validateRequest(QuestionSchema),
 
   (req, res, next) => {
     const payload = req.body
@@ -81,7 +79,6 @@ router.route('/questions').post(
     next()
   },
 
-  // validateRequest(QuestionCreateSchema),
   ExamControllers.createQuestion,
 )
 
@@ -97,7 +94,10 @@ router.route('/questions/:id').patch(
 router
   .route('/')
   .get(auth(USER_ROLES.ADMIN), ExamControllers.getAllExams)
-  .post(auth(USER_ROLES.ADMIN), ExamControllers.createExam)
+  .post(auth(USER_ROLES.ADMIN),
+  validateRequest(ExamSchema),
+
+  ExamControllers.createExam)
 
 router
   .route('/:id')

@@ -17,3 +17,11 @@ export const isSetEqual = (setA: Set<string>, setB: Set<string>): boolean => {
 export const isValidExamFilter = (field: string): boolean => {
   return examFilterables.includes(field)
 }
+
+export const defaultStats = {
+  questionCount: 0,
+  attempts: 0,
+  avgHighestScore: 0,
+  avgScore: 0,
+  lastAttemptAt: undefined, 
+}

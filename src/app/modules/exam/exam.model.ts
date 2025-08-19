@@ -1,6 +1,7 @@
 import { model, Schema, Types } from 'mongoose'
 import { ExamStats, IExam, IQuestion, IStem } from './exam.interface'
 import { ExamType, QuestionType } from '../../../enum/exam'
+import { defaultStats } from './exam.constants'
 
 const stemSchema = new Schema<IStem>(
   {
@@ -26,6 +27,7 @@ const optionSchema = new Schema(
 const questionSchema = new Schema<IQuestion>(
   {
     type: { type: String, enum: Object.values(QuestionType), required: true },
+    refId: { type: String },
     stems: [{ type: Types.ObjectId, ref: 'Stem' }],
     questionText: { type: String, required: true },
     options: [optionSchema],
@@ -57,14 +59,14 @@ const examStatsSchema = new Schema<ExamStats>(
 const examSchema = new Schema<IExam>(
   {
     category: { type: String, enum: Object.values(ExamType), required: true },
-    name: { type: String, required: true },
+    name: { type: String },
     code: { type: String },
     description: { type: String },
     isPublished: { type: Boolean, default: false },
     durationMinutes: { type: Number, default: 100 },
     passMark: { type: Number, default: 40 },
     questions: [{ type: Types.ObjectId, ref: 'Question' }],
-    stats: examStatsSchema,
+    stats: { type: examStatsSchema, default: defaultStats },
     createdBy: { type: Types.ObjectId, ref: 'User' },
   },
   { timestamps: true },
