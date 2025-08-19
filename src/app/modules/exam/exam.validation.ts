@@ -15,9 +15,15 @@ export const ExamTypeEnum = z.enum(['readiness', 'standalone', 'practice'])
 
 // Stem schema
 export const StemSchema = z.object({
-  stemTitle: z.string().min(1, 'Stem title is required'),
-  stemDescription: z.string().optional(),
-  stemPicture: z.string().url().optional(),
+  body: z.object({
+    stems: z.array(
+      z.object({
+        stemTitle: z.string().min(1, 'Stem title is required'),
+        stemDescription: z.string().optional(),
+        stemPicture: z.string().url().optional(),
+      }),
+    ),
+  }),
 })
 
 // Option schema
@@ -30,20 +36,26 @@ export const OptionSchema = z.object({
 
 // Question schema
 export const QuestionSchema = z.object({
-  type: QuestionTypeEnum,
-  stems: z
-    .array(z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId'))
-    .optional(),
-  questionText: z.string().min(1, 'Question text is required'),
-  options: z.array(OptionSchema).optional(),
-  allowMultiple: z.boolean().optional().default(false),
-  numberAnswer: z.number().optional(),
-  correctAnswer: z.number().optional(),
-  rearrangeItems: z.array(z.string()).optional(),
-  correctOrder: z.array(z.number()).optional(),
-  points: z.number().optional().default(1),
-  tags: z.array(z.string()).optional(),
-  explanation: z.string().optional(),
+  body: z.object({
+    questions: z.array(
+      z.object({
+        type: QuestionTypeEnum,
+        stems: z
+          .array(z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId'))
+          .optional(),
+        questionText: z.string().min(1, 'Question text is required'),
+        options: z.array(OptionSchema).optional(),
+        allowMultiple: z.boolean().optional().default(false),
+        numberAnswer: z.number().optional(),
+        correctAnswer: z.number().optional(),
+        rearrangeItems: z.array(z.string()).optional(),
+        correctOrder: z.array(z.number()).optional(),
+        points: z.number().optional().default(1),
+        tags: z.array(z.string()).optional(),
+        explanation: z.string().optional(),
+      }),
+    ),
+  }),
 })
 
 // ExamStats schema
