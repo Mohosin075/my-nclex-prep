@@ -34,7 +34,6 @@ export interface IQuestion {
   questionText: string
   options?: IOption[]
   allowMultiple?: boolean
-  correctAnswer: number
   numberAnswer?: number
   rearrangeItems?: string[]
   correctOrder?: number[]
