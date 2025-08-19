@@ -51,19 +51,9 @@ router.route('/stems').post(
     next()
   },
 
-  // fileUploadHandler(),
-  // handleStemImageUpload,
-  // validateRequest(StemCreateSchema),
   ExamControllers.createStem,
 )
 
-router.route('/stems/:id').patch(
-  auth(USER_ROLES.ADMIN),
-  fileUploadHandler(),
-  handleStemImageUpload,
-  // validateRequest(StemUpdateSchema),
-  ExamControllers.updateStem,
-)
 
 // --------------------
 // Questions routes
@@ -82,11 +72,6 @@ router.route('/questions').post(
   ExamControllers.createQuestion,
 )
 
-router.route('/questions/:id').patch(
-  auth(USER_ROLES.ADMIN),
-  // validateRequest(QuestionUpdateSchema),
-  ExamControllers.updateQuestion,
-)
 
 // --------------------
 // Exams routes
@@ -102,7 +87,6 @@ router
 router
   .route('/:id')
   .get(auth(USER_ROLES.ADMIN), ExamControllers.getSingleExam)
-  .patch(auth(USER_ROLES.ADMIN), ExamControllers.updateExam)
   .delete(auth(USER_ROLES.ADMIN), ExamControllers.deleteExam)
 
 export const ExamRoutes = router

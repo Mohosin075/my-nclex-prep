@@ -31,19 +31,23 @@ export const createQuestion = async (payload: IQuestion, user: JwtPayload) => {
 
   const status = ConfirmStatus.IN_PROGRESS
 
-  const refId = `${user.authId}_${status}`
+  const in_progress = `${user.authId}_${status}`
 
   payload.map(p => {
-    p.refId = refId
+    p.refId = in_progress
   })
 
   const question = await Question.insertMany(payload)
+
+  // const refId = `${user.authId}_${ConfirmStatus.IN_PROGRESS}`
+
+  const allQuestions = await Question.find({ refId: in_progress })
 
   if (!question) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Question')
   }
 
-  const ids = question.map(q => q._id)
+  const ids = allQuestions.map(q => q._id)
 
   return ids
 }
@@ -71,7 +75,7 @@ const createExam = async (user: JwtPayload, payload: IExam) => {
       .length
 
     payload.questions = ids
-    payload.name = payload.name || `NCLEX Practice Exam - ${allExams + 1}`
+    payload.name = payload.name || `${payload.category} Exam - ${allExams + 1}`
 
     // Create Exam
     const result = await Exam.create([payload], { session })
@@ -198,87 +202,6 @@ const getSingleExam = async (id: string): Promise<IExam> => {
   return result
 }
 
-const updateStem = async (
-  id: string,
-  payload: Partial<IStem>,
-): Promise<IStem | null> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Stem ID')
-  }
-
-  const result = await Stem.findByIdAndUpdate(
-    new Types.ObjectId(id),
-    { $set: payload },
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
-
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested stem not found, please try again with valid id',
-    )
-  }
-
-  return result
-}
-
-const updateExam = async (
-  id: string,
-  payload: Partial<IExam>,
-): Promise<IExam | null> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Exam ID')
-  }
-
-  const result = await Exam.findByIdAndUpdate(
-    new Types.ObjectId(id),
-    { $push: { questions: { $each: payload.questions } } },
-    { new: true, runValidators: true },
-  ).populate({
-    path: 'questions',
-    populate: { path: 'stems', model: 'Stem' },
-  })
-
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested exam not found, please try again with valid id',
-    )
-  }
-
-  return result
-}
-
-const updateQuestion = async (
-  id: string,
-  payload: Partial<IQuestion>,
-): Promise<IQuestion | null> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Question ID')
-  }
-
-  const result = await Question.findByIdAndUpdate(
-    new Types.ObjectId(id),
-    { $set: payload },
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
-
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested question not found, please try again with valid id',
-    )
-  }
-
-  return result
-}
-
 const deleteExam = async (id: string) => {
   const session = await mongoose.startSession()
   session.startTransaction()
@@ -341,8 +264,5 @@ export const ExamServices = {
   createExam,
   getAllExams,
   getSingleExam,
-  deleteExam,
-  updateStem,
-  updateQuestion,
-  updateExam,
+  deleteExam
 }

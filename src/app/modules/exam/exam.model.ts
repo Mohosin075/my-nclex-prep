@@ -1,5 +1,5 @@
 import { model, Schema, Types } from 'mongoose'
-import { ExamStats, IExam, IQuestion, IStem } from './exam.interface'
+import { ExamStats, IExam, IOption, IQuestion, IStem } from './exam.interface'
 import { ExamType, QuestionType } from '../../../enum/exam'
 import { defaultStats } from './exam.constants'
 
@@ -14,10 +14,11 @@ const stemSchema = new Schema<IStem>(
 
 export const Stem = model<IStem>('Stem', stemSchema)
 
-const optionSchema = new Schema(
+const optionSchema = new Schema<IOption>(
   {
     label: { type: String, required: true },
     value: { type: String, required: true },
+    isCorrect: { type: Boolean, default: false },
     explanation: { type: String },
     mediaUrl: { type: String },
   },
@@ -33,7 +34,6 @@ const questionSchema = new Schema<IQuestion>(
     options: [optionSchema],
     allowMultiple: { type: Boolean, default: false },
     numberAnswer: { type: Number },
-    correctAnswer: { type: Number },
     rearrangeItems: [{ type: String }],
     correctOrder: [{ type: Number }],
     points: { type: Number, default: 1 },

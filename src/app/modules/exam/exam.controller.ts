@@ -21,48 +21,6 @@ const createExam = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
-const updateStem = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params
-  const stemData = req.body
-
-  const result = await ExamServices.updateStem(id, stemData)
-
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: 'Stem updated successfully',
-    data: result,
-  })
-})
-
-const updateQuestion = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params
-  const questionData = req.body
-
-  const result = await ExamServices.updateQuestion(id, questionData)
-
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: 'Question updated successfully',
-    data: result,
-  })
-})
-
-const updateExam = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params
-  const examData = req.body
-
-  const result = await ExamServices.updateExam(id, examData)
-
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: 'Exam updated successfully',
-    data: result,
-  })
-})
-
 const getSingleExam = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params
   const result = await ExamServices.getSingleExam(id)
@@ -135,9 +93,6 @@ const deleteExam = catchAsync(async (req: Request, res: Response) => {
 
 export const ExamControllers = {
   createExam,
-  updateStem,
-  updateQuestion,
-  updateExam,
   getSingleExam,
   getAllExams,
   deleteExam,
