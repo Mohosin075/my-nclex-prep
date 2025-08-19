@@ -1524,7 +1524,6 @@
           }
         }
       }
-    }
   },
   "components": {
     "schemas": {
@@ -2535,7 +2534,171 @@
             "description": "updatedAt field"
           }
         }
+      },
+      "VariantsItem": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "MongoDB ObjectId"
+          },
+          "size": {
+            "type": "string",
+            "description": "size field"
+          },
+          "color": {
+            "type": "string",
+            "description": "color field"
+          },
+          "price": {
+            "type": "number",
+            "description": "price field"
+          },
+          "stock": {
+            "type": "number",
+            "description": "stock field"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": [
+          "_id"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "MongoDB ObjectId"
+          },
+          "name": {
+            "type": "string",
+            "description": "name field"
+          },
+          "description": {
+            "type": "string",
+            "description": "description field"
+          },
+          "category": {
+            "type": "string",
+            "description": "category field"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariantsItem"
+            },
+            "description": "Array of variants objects"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of images items"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "isActive field"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        },
+        "required": [
+          "_id",
+          "name"
+        ]
+      },
+      "ProductCreate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name field"
+          },
+          "description": {
+            "type": "string",
+            "description": "description field"
+          },
+          "category": {
+            "type": "string",
+            "description": "category field"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariantsItem"
+            },
+            "description": "Array of variants objects"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of images items"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "isActive field"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProductUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name field"
+          },
+          "description": {
+            "type": "string",
+            "description": "description field"
+          },
+          "category": {
+            "type": "string",
+            "description": "category field"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariantsItem"
+            },
+            "description": "Array of variants objects"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of images items"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "isActive field"
+          }
+        }
       }
     }
   }
-}
+  }
