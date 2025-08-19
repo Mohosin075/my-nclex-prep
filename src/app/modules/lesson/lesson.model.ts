@@ -7,7 +7,7 @@ const StemSchema = new Schema<IStem>({
   stemDescription: { type: String },
   stemPicture: { type: String },
 })
-export const Stem = model<IStem>('Stem', StemSchema)
+export const LessonStem = model<IStem>('LessonStem', StemSchema)
 
 // Question Schema & Model
 const QuestionSchema = new Schema<IQuestion>({
@@ -34,7 +34,7 @@ QuestionSchema.pre('validate', function (next) {
   next()
 })
 
-export const Question = model<IQuestion>('Question', QuestionSchema)
+export const LessonQuestion = model<IQuestion>('LessonQuestion', QuestionSchema)
 
 // Lesson Schema & Model
 const LessonSchema = new Schema<ILesson>(

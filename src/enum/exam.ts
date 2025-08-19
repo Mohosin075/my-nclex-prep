@@ -9,7 +9,6 @@ export enum QuestionType {
 }
 
 export enum ExamType {
-  PRACTICE = 'PRACTICE',
-  READINESS = 'READINESS',
-  STANDALONE = 'STANDALONE',
-} 
+  READINESS = 'readiness',
+  STANDALONE = 'standalone',
+}
