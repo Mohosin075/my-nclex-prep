@@ -19,7 +19,7 @@ export const StemSchema = z.object({
   body: z.object({
     stems: z.array(
       z.object({
-        stemTitle: z.string().min(1, 'Stem title is required'),
+        stemTitle: z.string().optional(),
         stemDescription: z.string().optional(),
         stemPicture: z.string().url().optional(),
       }),
@@ -67,8 +67,6 @@ export const ExamStatsSchema = z.object({
   avgScore: z.number().optional().default(0),
   lastAttemptAt: z.string().datetime().optional(),
 })
-
-
 
 // Exam schema (main)
 export const ExamSchema = z.object({

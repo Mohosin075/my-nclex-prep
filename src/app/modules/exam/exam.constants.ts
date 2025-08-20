@@ -23,5 +23,6 @@ export const defaultStats = {
   attempts: 0,
   avgHighestScore: 0,
   avgScore: 0,
-  lastAttemptAt: undefined, 
+  avgTime: 0,
+  lastAttemptAt: undefined,
 }

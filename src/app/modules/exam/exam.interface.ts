@@ -11,9 +11,9 @@ export interface IExamFilter {
 // Stem model
 export interface IStem {
   _id?: string
-  stemTitle: string
+  stemTitle?: string
   stemDescription?: string
-  stemPicture?: string
+  stemPicture?: string | null
 }
 
 export interface IOption {
@@ -49,6 +49,7 @@ export interface ExamStats {
   attempts: number
   avgHighestScore: number
   avgScore: number
+  avgTime: number
   lastAttemptAt?: Date
 }
 

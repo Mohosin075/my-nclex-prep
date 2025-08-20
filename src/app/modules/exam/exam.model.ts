@@ -5,9 +5,9 @@ import { defaultStats } from './exam.constants'
 
 const stemSchema = new Schema<IStem>(
   {
-    stemTitle: { type: String, required: true },
+    stemTitle: { type: String },
     stemDescription: { type: String },
-    stemPicture: { type: String },
+    stemPicture: { type: String || null, default: null },
   },
   { timestamps: true },
 )
@@ -51,6 +51,7 @@ const examStatsSchema = new Schema<ExamStats>(
     attempts: { type: Number, default: 0 },
     avgHighestScore: { type: Number, default: 0 },
     avgScore: { type: Number, default: 0 },
+    avgTime: { type: Number, default: 0 },
     lastAttemptAt: { type: Date },
   },
   { _id: false },
