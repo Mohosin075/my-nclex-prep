@@ -178,25 +178,25 @@ const getAllLessons = async (
   }
 }
 
-const getReadinessLesson = async () => {
-  const ReadinessLessons = await Lesson.find({
+const getNextGenLesson = async () => {
+  const NextGenLessons = await Lesson.find({
     isPublished: true,
-    category: 'readiness',
+    category: 'next_gen',
   }).select('-questions -stats')
-  if (!ReadinessLessons || ReadinessLessons.length === 0) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'No readiness lessons found')
+  if (!NextGenLessons || NextGenLessons.length === 0) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No next_gen lessons found')
   }
-  return ReadinessLessons
+  return NextGenLessons
 }
-const getStandaloneLesson = async () => {
-  const StandaloneLessons = await Lesson.find({
+const getCaseStudyLesson = async () => {
+  const CaseStudyLessons = await Lesson.find({
     isPublished: true,
-    category: 'standalone',
+    category: 'case_study',
   }).select('-questions -stats')
-  if (!StandaloneLessons || StandaloneLessons.length === 0) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'No standalone lessons found')
+  if (!CaseStudyLessons || CaseStudyLessons.length === 0) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No case_study lessons found')
   }
-  return StandaloneLessons
+  return CaseStudyLessons
 }
 
 const getQuestionByLesson = async (
@@ -270,80 +270,6 @@ const getSingleLesson = async (id: string): Promise<ILesson> => {
 
   return result
 }
-
-// const deleteLesson = async (id: string) => {
-//   const session = await mongoose.startSession()
-//   session.startTransaction()
-
-//   try {
-//     const isLessonExist = await Lesson.findById(id).session(session)
-
-//     if (!isLessonExist) {
-//       throw new ApiError(StatusCodes.NOT_FOUND, 'Lesson not found')
-//     }
-
-//     // ✅ Step 1: Aggregate lesson with questions + stems
-//     const lessonAgg = await Lesson.aggregate([
-//       { $match: { _id: new mongoose.Types.ObjectId(id) } },
-//       {
-//         $lookup: {
-//           from: 'questions',
-//           localField: 'questions',
-//           foreignField: '_id',
-//           as: 'questions',
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: 'stems',
-//           localField: 'questions.stems',
-//           foreignField: '_id',
-//           as: 'stems',
-//         },
-//       },
-//     ]).session(session)
-
-//     if (!lessonAgg.length) {
-//       throw new ApiError(StatusCodes.NOT_FOUND, 'Lesson not found')
-//     }
-
-//     const lesson = lessonAgg[0]
-
-//     //  Step 2: Collect Question IDs & Stem IDs
-//     const questionIds = lesson.questions.map((q: any) => q._id)
-//     const stemIds = lesson.stems.map((s: any) => s._id)
-
-//     //  Step 3: Delete stems
-//     if (stemIds.length) {
-//       await Stem.deleteMany({ _id: { $in: stemIds } }, { session })
-//     }
-
-//     //  Step 4: Delete questions
-//     if (questionIds.length) {
-//       await Question.deleteMany({ _id: { $in: questionIds } }, { session })
-//     }
-//     await Lesson.findByIdAndDelete(id, { session })
-
-//     const stems = await Stem.find({ _id: { $in: stemIds } }, { session })
-
-//     stems.forEach(async stem => {
-//       if (stem.stemPicture) {
-//         const url = new URL(stem.stemPicture)
-//         const key = url.pathname.substring(1)
-//         await S3Helper.deleteFromS3(key)
-//       }
-//     })
-
-//     await session.commitTransaction()
-//     session.endSession()
-
-//     return lesson
-//   } catch (err) {
-//     await session.abortTransaction()
-//     session.endSession()
-//     throw err
-//   }
-// }
 
 const deleteLesson = async (id: string) => {
   const session = await mongoose.startSession()
@@ -424,7 +350,7 @@ export const LessonServices = {
   getSingleLesson,
   deleteLesson,
 
-  getReadinessLesson,
-  getStandaloneLesson,
+  getNextGenLesson,
+  getCaseStudyLesson,
   getQuestionByLesson,
 }

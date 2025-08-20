@@ -50,22 +50,22 @@ const getAllLessons = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
-const getReadinessLesson = catchAsync(async (req: Request, res: Response) => {
-  const result = await LessonServices.getReadinessLesson()
+const getNextGenLesson = catchAsync(async (req: Request, res: Response) => {
+  const result = await LessonServices.getNextGenLesson()
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Readiness lessons retrieved successfully',
+    message: 'Next Gen lessons retrieved successfully',
     data: result,
   })
 })
 
-const getStandaloneLesson = catchAsync(async (req: Request, res: Response) => {
-  const result = await LessonServices.getStandaloneLesson()
+const getCaseStudyLesson = catchAsync(async (req: Request, res: Response) => {
+  const result = await LessonServices.getCaseStudyLesson()
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Standalone lessons retrieved successfully',
+    message: 'CaseStudy lessons retrieved successfully',
     data: result,
   })
 })
@@ -101,7 +101,7 @@ export const LessonControllers = {
   getAllLessons,
   deleteLesson,
 
-  getReadinessLesson,
-  getStandaloneLesson,
+  getNextGenLesson,
+  getCaseStudyLesson,
   getQuestionByLesson,
 }
