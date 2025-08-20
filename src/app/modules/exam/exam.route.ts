@@ -41,19 +41,51 @@ const handleStemImageUpload = async (req: any, res: any, next: any) => {
 router.route('/stems').post(
   auth(USER_ROLES.ADMIN),
 
-  validateRequest(StemSchema),
+  fileUploadHandler(),
 
-  (req, res, next) => {
-    const payload = req.body
+  // validateRequest(StemSchema),
 
-    req.body = payload.stems
+  async (req, res, next) => {
+    try {
+      const payload = req.body
+      payload.stems = JSON.parse(payload.stems)
+      req.body = payload.stems
+
+      const imageFiles = (req.files as any)?.image as Express.Multer.File[]
+
+      if (imageFiles) {
+        // Take the first image only
+        const imageFile = imageFiles
+
+        // Upload single image to S3
+        const uploadedImageUrl = await S3Helper.uploadMultipleFilesToS3(
+          imageFile,
+          'image',
+        )
+
+        if (!uploadedImageUrl) {
+          throw new ApiError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            'Failed to upload image',
+          )
+        }
+
+        // Merge into req.body for Zod validation
+        req.body = payload.stems.map((stem: any, index: number) => ({
+          ...stem,
+          stemPicture: uploadedImageUrl[index] || null, // Get image by index
+        }))
+      }
+    } catch (error) {
+      console.error({ error })
+      res.status(400).json({ message: 'Failed to upload image' })
+    }
 
     next()
   },
 
   ExamControllers.createStem,
 )
-
 
 // --------------------
 // Questions routes
@@ -72,17 +104,15 @@ router.route('/questions').post(
   ExamControllers.createQuestion,
 )
 
-
 // --------------------
 // Exams routes
 // --------------------
-router
-  .route('/')
-  .get(auth(USER_ROLES.ADMIN), ExamControllers.getAllExams)
-  .post(auth(USER_ROLES.ADMIN),
+router.route('/').get(auth(USER_ROLES.ADMIN), ExamControllers.getAllExams).post(
+  auth(USER_ROLES.ADMIN),
   validateRequest(ExamSchema),
 
-  ExamControllers.createExam)
+  ExamControllers.createExam,
+)
 
 router
   .route('/:id')
