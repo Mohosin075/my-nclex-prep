@@ -51,10 +51,42 @@ const getAllExams = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+const getReadinessExam = catchAsync(async (req: Request, res: Response) => {
+  const result = await ExamServices.getReadinessExam()
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Readiness exams retrieved successfully',
+    data: result,
+  })
+})
+
+const getStandaloneExam = catchAsync(async (req: Request, res: Response) => {
+  const result = await ExamServices.getStandaloneExam()
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Standalone exams retrieved successfully',
+    data: result,
+  })
+})
+
+const getQuestionByExam = catchAsync(async (req: Request, res: Response) => {
+  const { examId } = req.params
+
+  const pagination = pick(req.query, paginationFields)
+  const result = await ExamServices.getQuestionByExam(examId, pagination)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Questions retrieved successfully',
+    data: result,
+  })
+})
+
 const createStemController = catchAsync(async (req: Request, res: Response) => {
   const stemData = req.body
-
-  console.log({stemData})
 
   const result = await createStem(stemData)
   sendResponse(res, {
@@ -98,4 +130,8 @@ export const ExamControllers = {
   deleteExam,
   createStem: createStemController,
   createQuestion: createQuestionController,
+
+  getReadinessExam,
+  getStandaloneExam,
+  getQuestionByExam,
 }

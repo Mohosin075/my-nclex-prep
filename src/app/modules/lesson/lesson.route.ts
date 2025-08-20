@@ -1,5 +1,4 @@
 import express from 'express'
-import { ExamControllers } from './exam.controller'
 import auth from '../../middleware/auth'
 import { USER_ROLES } from '../../../enum/user'
 import validateRequest from '../../middleware/validateRequest'
@@ -7,7 +6,10 @@ import fileUploadHandler from '../../middleware/fileUploadHandler'
 import { S3Helper } from '../../../helpers/image/s3helper'
 import ApiError from '../../../errors/ApiError'
 import { StatusCodes } from 'http-status-codes'
-import { ExamSchema, QuestionSchema, StemSchema } from './exam.validation'
+import { LessonSchema } from './lesson.validation'
+import { LessonControllers } from '../lesson/lesson.controller'
+import { ExamControllers } from '../exam/exam.controller'
+import { QuestionSchema } from '../exam/exam.validation'
 
 const router = express.Router()
 
@@ -89,38 +91,41 @@ router.route('/questions').post(
 )
 
 // --------------------
-// Exams routes
+// Lessons routes
 // --------------------
-router.route('/').get(auth(USER_ROLES.ADMIN), ExamControllers.getAllExams).post(
-  auth(USER_ROLES.ADMIN),
-  validateRequest(ExamSchema),
+router
+  .route('/')
+  .get(auth(USER_ROLES.ADMIN), LessonControllers.getAllLessons)
+  .post(
+    auth(USER_ROLES.ADMIN),
+    validateRequest(LessonSchema),
 
-  ExamControllers.createExam,
-)
+    LessonControllers.createLesson,
+  )
 
 router
   .route('/readiness')
   .get(
     auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
-    ExamControllers.getReadinessExam,
+    LessonControllers.getReadinessLesson,
   )
 router
   .route('/standalone')
   .get(
     auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
-    ExamControllers.getStandaloneExam,
+    LessonControllers.getStandaloneLesson,
   )
 
 router
   .route('/:id')
-  .get(auth(USER_ROLES.ADMIN), ExamControllers.getSingleExam)
-  .delete(auth(USER_ROLES.ADMIN), ExamControllers.deleteExam)
+  .get(auth(USER_ROLES.ADMIN), LessonControllers.getSingleLesson)
+  .delete(auth(USER_ROLES.ADMIN), LessonControllers.deleteLesson)
 
 router
-  .route('/:examId/questions')
+  .route('/:lessonId/questions')
   .get(
     auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
-    ExamControllers.getQuestionByExam,
+    LessonControllers.getQuestionByLesson,
   )
 
-export const ExamRoutes = router
+export const LessonRoutes = router
