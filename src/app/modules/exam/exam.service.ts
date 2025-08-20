@@ -8,6 +8,7 @@ import { examSearchableFields } from './exam.constants'
 import mongoose, { Types } from 'mongoose'
 import { Exam, Question, Stem } from './exam.model'
 import { ConfirmStatus } from '../../../enum/exam'
+import { S3Helper } from '../../../helpers/image/s3helper'
 // Create Stem
 export const createStem = async (payload: IStem[]) => {
   if (!Array.isArray(payload) || payload.length === 0) {
@@ -79,7 +80,6 @@ const createExam = async (user: JwtPayload, payload: IExam) => {
 
     // Create Exam
     const result = await Exam.create([payload], { session })
-    console.log({ result })
 
     if (!result || result.length === 0) {
       throw new ApiError(
@@ -122,8 +122,6 @@ const getAllExams = async (
   pagination: IPaginationOptions,
 ) => {
   const { searchTerm, ...filterData } = filterables
-
-  console.log({ filterData })
 
   const { page, skip, limit, sortBy, sortOrder } =
     paginationHelper.calculatePagination(pagination)
@@ -202,12 +200,92 @@ const getSingleExam = async (id: string): Promise<IExam> => {
   return result
 }
 
+// const deleteExam = async (id: string) => {
+//   const session = await mongoose.startSession()
+//   session.startTransaction()
+
+//   try {
+//     const isExamExist = await Exam.findById(id).session(session)
+
+//     if (!isExamExist) {
+//       throw new ApiError(StatusCodes.NOT_FOUND, 'Exam not found')
+//     }
+
+//     // ✅ Step 1: Aggregate exam with questions + stems
+//     const examAgg = await Exam.aggregate([
+//       { $match: { _id: new mongoose.Types.ObjectId(id) } },
+//       {
+//         $lookup: {
+//           from: 'questions',
+//           localField: 'questions',
+//           foreignField: '_id',
+//           as: 'questions',
+//         },
+//       },
+//       {
+//         $lookup: {
+//           from: 'stems',
+//           localField: 'questions.stems',
+//           foreignField: '_id',
+//           as: 'stems',
+//         },
+//       },
+//     ]).session(session)
+
+//     if (!examAgg.length) {
+//       throw new ApiError(StatusCodes.NOT_FOUND, 'Exam not found')
+//     }
+
+//     const exam = examAgg[0]
+
+//     //  Step 2: Collect Question IDs & Stem IDs
+//     const questionIds = exam.questions.map((q: any) => q._id)
+//     const stemIds = exam.stems.map((s: any) => s._id)
+
+//     //  Step 3: Delete stems
+//     if (stemIds.length) {
+//       await Stem.deleteMany({ _id: { $in: stemIds } }, { session })
+//     }
+
+//     //  Step 4: Delete questions
+//     if (questionIds.length) {
+//       await Question.deleteMany({ _id: { $in: questionIds } }, { session })
+//     }
+//     await Exam.findByIdAndDelete(id, { session })
+
+//     const stems = await Stem.find({ _id: { $in: stemIds } }, { session })
+
+//     stems.forEach(async stem => {
+//       if (stem.stemPicture) {
+//         const url = new URL(stem.stemPicture)
+//         const key = url.pathname.substring(1)
+//         await S3Helper.deleteFromS3(key)
+//       }
+//     })
+
+//     await session.commitTransaction()
+//     session.endSession()
+
+//     return exam
+//   } catch (err) {
+//     await session.abortTransaction()
+//     session.endSession()
+//     throw err
+//   }
+// }
+
 const deleteExam = async (id: string) => {
   const session = await mongoose.startSession()
   session.startTransaction()
 
   try {
-    // ✅ Step 1: Aggregate exam with questions + stems
+    const isExamExist = await Exam.findById(id).session(session)
+
+    if (!isExamExist) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Exam not found')
+    }
+
+    // ✅ FIXED: Use Aggregate() constructor with session
     const examAgg = await Exam.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
       {
@@ -226,7 +304,7 @@ const deleteExam = async (id: string) => {
           as: 'stems',
         },
       },
-    ]).session(session)
+    ]).session(session) // ← This is the correct way
 
     if (!examAgg.length) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Exam not found')
@@ -234,28 +312,40 @@ const deleteExam = async (id: string) => {
 
     const exam = examAgg[0]
 
-    //  Step 2: Collect Question IDs & Stem IDs
+    // Rest of your code remains the same...
     const questionIds = exam.questions.map((q: any) => q._id)
     const stemIds = exam.stems.map((s: any) => s._id)
 
-    //  Step 3: Delete stems
     if (stemIds.length) {
+      const stems = await Stem.find({ _id: { $in: stemIds } }).session(session)
+
+      // Use Promise.all for parallel deletion from S3
+      await Promise.all(
+        stems.map(async stem => {
+          if (stem.stemPicture) {
+            const url = new URL(stem.stemPicture)
+            const key = url.pathname.substring(1)
+            await S3Helper.deleteFromS3(key)
+          }
+        }),
+      )
+
       await Stem.deleteMany({ _id: { $in: stemIds } }, { session })
     }
 
-    //  Step 4: Delete questions
     if (questionIds.length) {
       await Question.deleteMany({ _id: { $in: questionIds } }, { session })
     }
+
     await Exam.findByIdAndDelete(id, { session })
 
     await session.commitTransaction()
-    session.endSession()
+    await session.endSession()
 
     return exam
   } catch (err) {
     await session.abortTransaction()
-    session.endSession()
+    await session.endSession()
     throw err
   }
 }
@@ -264,5 +354,5 @@ export const ExamServices = {
   createExam,
   getAllExams,
   getSingleExam,
-  deleteExam
+  deleteExam,
 }
