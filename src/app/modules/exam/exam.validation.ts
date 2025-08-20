@@ -68,6 +68,8 @@ export const ExamStatsSchema = z.object({
   lastAttemptAt: z.string().datetime().optional(),
 })
 
+
+
 // Exam schema (main)
 export const ExamSchema = z.object({
   body: z.object({

@@ -7,7 +7,7 @@ import { paginationHelper } from '../../../helpers/paginationHelper'
 import { examSearchableFields } from './exam.constants'
 import mongoose, { Types } from 'mongoose'
 import { Exam, Question, Stem } from './exam.model'
-import { ConfirmStatus } from '../../../enum/exam'
+import { ConfirmStatus, ExamType } from '../../../enum/exam'
 import { S3Helper } from '../../../helpers/image/s3helper'
 // Create Stem
 export const createStem = async (payload: IStem[]) => {
@@ -16,10 +16,10 @@ export const createStem = async (payload: IStem[]) => {
   }
 
   const createdStems = await Stem.insertMany(payload)
-
   if (!createdStems) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Stem')
   }
+
   const stemIds = createdStems.map(stem => stem._id)
   return stemIds
 }
@@ -31,25 +31,19 @@ export const createQuestion = async (payload: IQuestion, user: JwtPayload) => {
   }
 
   const status = ConfirmStatus.IN_PROGRESS
-
   const in_progress = `${user.authId}_${status}`
-
   payload.map(p => {
     p.refId = in_progress
   })
-
   const question = await Question.insertMany(payload)
 
   // const refId = `${user.authId}_${ConfirmStatus.IN_PROGRESS}`
 
   const allQuestions = await Question.find({ refId: in_progress })
-
   if (!question) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to create Question')
   }
-
   const ids = allQuestions.map(q => q._id)
-
   return ids
 }
 
@@ -60,7 +54,6 @@ const createExam = async (user: JwtPayload, payload: IExam) => {
   try {
     // in-progress
     const refId = `${user.authId}_${ConfirmStatus.IN_PROGRESS}`
-
     const questions = await Question.find({ refId }).session(session)
 
     if (questions.length === 0) {
@@ -71,16 +64,25 @@ const createExam = async (user: JwtPayload, payload: IExam) => {
     }
 
     const ids = questions.map(q => q._id.toString())
+    const [readinessExams, standaloneExams] = await Promise.all([
+      Exam.find({ isPublished: true, category: 'readiness' })
+        .session(session)
+        .countDocuments(),
+      Exam.find({ isPublished: true, category: 'standalone' })
+        .session(session)
+        .countDocuments(),
+    ])
 
-    const allExams = (await Exam.find({ isPublished: true }).session(session))
-      .length
+    const defaultName =
+      payload.category === ExamType.READINESS
+        ? `${ExamType.READINESS} exam - ${readinessExams + 1}`
+        : `${ExamType.STANDALONE} exam - ${standaloneExams + 1}`
 
     payload.questions = ids
-    payload.name = payload.name || `${payload.category} Exam - ${allExams + 1}`
+    payload.name = payload.name || defaultName
 
     // Create Exam
     const result = await Exam.create([payload], { session })
-
     if (!result || result.length === 0) {
       throw new ApiError(
         StatusCodes.BAD_REQUEST,
@@ -122,10 +124,8 @@ const getAllExams = async (
   pagination: IPaginationOptions,
 ) => {
   const { searchTerm, ...filterData } = filterables
-
   const { page, skip, limit, sortBy, sortOrder } =
     paginationHelper.calculatePagination(pagination)
-
   const andConditions = []
 
   // 🔍 Search functionality
@@ -174,6 +174,76 @@ const getAllExams = async (
       totalPages: Math.ceil(total / limit),
     },
     data: result,
+  }
+}
+
+const getReadinessExam = async () => {
+  const ReadinessExams = await Exam.find({
+    isPublished: true,
+    category: 'readiness',
+  }).select('-questions -stats')
+  if (!ReadinessExams || ReadinessExams.length === 0) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No readiness exams found')
+  }
+  return ReadinessExams
+}
+const getStandaloneExam = async () => {
+  const StandaloneExams = await Exam.find({
+    isPublished: true,
+    category: 'standalone',
+  }).select('-questions -stats')
+  if (!StandaloneExams || StandaloneExams.length === 0) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No standalone exams found')
+  }
+  return StandaloneExams
+}
+
+const getQuestionByExam = async (
+  examId: string,
+  pagination: IPaginationOptions,
+) => {
+  if (!Types.ObjectId.isValid(examId)) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Exam ID')
+  }
+
+  const exam = await Exam.findById(examId)
+  if (!exam) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Exam not found')
+  }
+
+  // Calculate pagination
+  const { page, skip, limit, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(pagination)
+
+  // ✅ Use the question IDs from the exam document with pagination
+  const [questions, total] = await Promise.all([
+    Question.find({
+      _id: { $in: exam.questions },
+    })
+      .skip(skip)
+      .limit(limit)
+      .sort({ [sortBy]: sortOrder })
+      .populate('stems'),
+    Question.countDocuments({
+      _id: { $in: exam.questions },
+    }),
+  ])
+
+  if (!questions.length) {
+    throw new ApiError(
+      StatusCodes.NOT_FOUND,
+      'No questions found for this exam',
+    )
+  }
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+    data: questions,
   }
 }
 
@@ -280,7 +350,6 @@ const deleteExam = async (id: string) => {
 
   try {
     const isExamExist = await Exam.findById(id).session(session)
-
     if (!isExamExist) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Exam not found')
     }
@@ -309,7 +378,6 @@ const deleteExam = async (id: string) => {
     if (!examAgg.length) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Exam not found')
     }
-
     const exam = examAgg[0]
 
     // Rest of your code remains the same...
@@ -336,7 +404,6 @@ const deleteExam = async (id: string) => {
     if (questionIds.length) {
       await Question.deleteMany({ _id: { $in: questionIds } }, { session })
     }
-
     await Exam.findByIdAndDelete(id, { session })
 
     await session.commitTransaction()
@@ -355,4 +422,8 @@ export const ExamServices = {
   getAllExams,
   getSingleExam,
   deleteExam,
+
+  getReadinessExam,
+  getStandaloneExam,
+  getQuestionByExam,
 }
