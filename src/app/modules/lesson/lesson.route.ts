@@ -104,16 +104,16 @@ router
   )
 
 router
-  .route('/readiness')
+  .route('/next_gen')
   .get(
     auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
-    LessonControllers.getReadinessLesson,
+    LessonControllers.getNextGenLesson,
   )
 router
-  .route('/standalone')
+  .route('/case_study')
   .get(
     auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
-    LessonControllers.getStandaloneLesson,
+    LessonControllers.getCaseStudyLesson,
   )
 
 router
