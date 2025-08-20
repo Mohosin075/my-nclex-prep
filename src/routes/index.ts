@@ -10,6 +10,7 @@ import { ReviewRoutes } from '../app/modules/review/review.route'
 import { StudymaterialRoutes } from '../app/modules/studymaterial/studymaterial.route'
 import { StudyscheduleRoutes } from '../app/modules/studyschedule/studyschedule.route'
 import { ExamRoutes } from '../app/modules/exam/exam.route'
+import { LessonRoutes } from '../app/modules/lesson/lesson.route'
 
 const router = express.Router()
 
@@ -28,6 +29,7 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/studymaterial', route: StudymaterialRoutes },
   { path: '/studyschedule', route: StudyscheduleRoutes },
   { path: '/exam', route: ExamRoutes },
+  { path: '/lesson', route: LessonRoutes },
 ]
 
 apiRoutes.forEach(route => {
