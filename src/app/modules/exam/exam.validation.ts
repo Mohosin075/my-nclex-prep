@@ -21,12 +21,12 @@ export const StemSchema = z.object({
       z.object({
         stemTitle: z.string().optional(),
         stemDescription: z.string().optional(),
-        stemPicture: z.string().url().nullable().optional(), // allow null or URL
+        stemPicture: z.string().url().nullable().optional(),
         table: z
           .array(
             z.object({
               key: z.string(),
-              value: z.union([z.string(), z.number(), z.boolean(), z.null()]), // Mixed support
+              value: z.union([z.string(), z.number(), z.boolean(), z.null()]),
               type: z.enum(['text', 'number', 'boolean']).default('text'),
             }),
           )
