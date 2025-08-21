@@ -23,19 +23,6 @@ const createMnemonic = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateMnemonic = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const mnemonicData = req.body;
-
-  const result = await MnemonicServices.updateMnemonic(id, mnemonicData);
-
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    success: true,
-    message: 'Mnemonic updated successfully',
-    data: result,
-  });
-});
 
 const getSingleMnemonic = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -81,7 +68,6 @@ const deleteMnemonic = catchAsync(async (req: Request, res: Response) => {
 
 export const MnemonicController = {
   createMnemonic,
-  updateMnemonic,
   getSingleMnemonic,
   getAllMnemonics,
   deleteMnemonic,
