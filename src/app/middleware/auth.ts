@@ -39,6 +39,7 @@ const auth =
 
           next()
         } catch (error) {
+          console.log({error})
           if (error instanceof Error && error.name === 'TokenExpiredError') {
             throw new ApiError(StatusCodes.UNAUTHORIZED, 'Access Token has expired')
           }
