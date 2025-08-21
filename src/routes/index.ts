@@ -13,6 +13,7 @@ import { ExamRoutes } from '../app/modules/exam/exam.route'
 import { LessonRoutes } from '../app/modules/lesson/lesson.route'
 import { StudyprogressRoutes } from '../app/modules/studyprogress/studyprogress.route'
 import { CategoryRoutes } from '../app/modules/category/category.route'
+import { MnemonicRoutes } from '../app/modules/mnemonic/mnemonic.route'
 
 const router = express.Router()
 
@@ -35,7 +36,9 @@ const apiRoutes: { path: string; route: Router }[] = [
 
   { path: '/studyprogress', route: StudyprogressRoutes },
 
-  { path: '/category', route: CategoryRoutes }]
+  { path: '/category', route: CategoryRoutes },
+  { path: '/mnemonic', route: MnemonicRoutes },
+]
 
 apiRoutes.forEach(route => {
   router.use(route.path, route.route)

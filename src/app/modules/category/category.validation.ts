@@ -5,6 +5,7 @@ export const CategoryValidations = {
     body: z.object({
       name: z.string(),
       description: z.string().optional(),
+      image: z.string().optional(),
     }),
   }),
 
@@ -12,6 +13,7 @@ export const CategoryValidations = {
     body: z.object({
       name: z.string().optional(),
       description: z.string().optional(),
+      image: z.string().optional(),
     }),
   }),
 }
