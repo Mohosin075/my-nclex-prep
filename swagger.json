@@ -6,25 +6,25 @@
     "description": "Generated API documentation"
   },
   "paths": {
-    "/support": {
+    "/studyprogress": {
       "post": {
         "tags": [
-          "Support"
+          "Studyprogress"
         ],
-        "summary": "Create a new Support",
+        "summary": "Create a new Studyprogress",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupportCreate"
+                "$ref": "#/components/schemas/StudyprogressCreate"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Support created successfully",
+            "description": "Studyprogress created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -37,7 +37,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/Support"
+                      "$ref": "#/components/schemas/Studyprogress"
                     }
                   }
                 }
@@ -51,12 +51,12 @@
       },
       "get": {
         "tags": [
-          "Support"
+          "Studyprogress"
         ],
-        "summary": "Get all Supports",
+        "summary": "Get all Studyprogresss",
         "responses": {
           "200": {
-            "description": "List of Supports retrieved successfully",
+            "description": "List of Studyprogresss retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -71,7 +71,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Support"
+                        "$ref": "#/components/schemas/Studyprogress"
                       }
                     }
                   }
@@ -82,12 +82,12 @@
         }
       }
     },
-    "/support/{id}": {
+    "/studyprogress/{id}": {
       "get": {
         "tags": [
-          "Support"
+          "Studyprogress"
         ],
-        "summary": "Get Support by ID",
+        "summary": "Get Studyprogress by ID",
         "parameters": [
           {
             "name": "id",
@@ -96,12 +96,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Support ID"
+            "description": "Studyprogress ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "Support retrieved successfully",
+            "description": "Studyprogress retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -114,7 +114,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/Support"
+                      "$ref": "#/components/schemas/Studyprogress"
                     }
                   }
                 }
@@ -122,15 +122,15 @@
             }
           },
           "404": {
-            "description": "Support not found"
+            "description": "Studyprogress not found"
           }
         }
       },
       "patch": {
         "tags": [
-          "Support"
+          "Studyprogress"
         ],
-        "summary": "Update Support",
+        "summary": "Update Studyprogress",
         "parameters": [
           {
             "name": "id",
@@ -139,7 +139,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Support ID"
+            "description": "Studyprogress ID"
           }
         ],
         "requestBody": {
@@ -147,14 +147,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupportUpdate"
+                "$ref": "#/components/schemas/StudyprogressUpdate"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Support updated successfully",
+            "description": "Studyprogress updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -167,7 +167,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/Support"
+                      "$ref": "#/components/schemas/Studyprogress"
                     }
                   }
                 }
@@ -175,15 +175,15 @@
             }
           },
           "404": {
-            "description": "Support not found"
+            "description": "Studyprogress not found"
           }
         }
       },
       "delete": {
         "tags": [
-          "Support"
+          "Studyprogress"
         ],
-        "summary": "Delete Support",
+        "summary": "Delete Studyprogress",
         "parameters": [
           {
             "name": "id",
@@ -192,12 +192,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "Support ID"
+            "description": "Studyprogress ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "Support deleted successfully",
+            "description": "Studyprogress deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -210,7 +210,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/Support"
+                      "$ref": "#/components/schemas/Studyprogress"
                     }
                   }
                 }
@@ -218,1356 +218,53 @@
             }
           },
           "404": {
-            "description": "Support not found"
+            "description": "Studyprogress not found"
           }
         }
       }
-    },
-    "/onboardingscreen": {
-      "post": {
-        "tags": [
-          "Onboardingscreen"
-        ],
-        "summary": "Create a new Onboardingscreen",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OnboardingscreenCreate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Onboardingscreen created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Onboardingscreen"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Onboardingscreen"
-        ],
-        "summary": "Get all Onboardingscreens",
-        "responses": {
-          "200": {
-            "description": "List of Onboardingscreens retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Onboardingscreen"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/onboardingscreen/{id}": {
-      "get": {
-        "tags": [
-          "Onboardingscreen"
-        ],
-        "summary": "Get Onboardingscreen by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Onboardingscreen ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Onboardingscreen retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Onboardingscreen"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Onboardingscreen not found"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Onboardingscreen"
-        ],
-        "summary": "Update Onboardingscreen",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Onboardingscreen ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OnboardingscreenUpdate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Onboardingscreen updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Onboardingscreen"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Onboardingscreen not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Onboardingscreen"
-        ],
-        "summary": "Delete Onboardingscreen",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Onboardingscreen ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Onboardingscreen deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Onboardingscreen"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Onboardingscreen not found"
-          }
-        }
-      }
-    },
-    "/community": {
-      "post": {
-        "tags": [
-          "Community"
-        ],
-        "summary": "Create a new Community",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CommunityCreate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Community created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Community"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Community"
-        ],
-        "summary": "Get all Communitys",
-        "responses": {
-          "200": {
-            "description": "List of Communitys retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Community"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/community/{id}": {
-      "get": {
-        "tags": [
-          "Community"
-        ],
-        "summary": "Get Community by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Community ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Community retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Community"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Community not found"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Community"
-        ],
-        "summary": "Update Community",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Community ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CommunityUpdate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Community updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Community"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Community not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Community"
-        ],
-        "summary": "Delete Community",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Community ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Community deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Community"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Community not found"
-          }
-        }
-      }
-    },
-    "/studymaterial": {
-      "post": {
-        "tags": [
-          "Studymaterial"
-        ],
-        "summary": "Create a new Studymaterial",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StudymaterialCreate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Studymaterial created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studymaterial"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Studymaterial"
-        ],
-        "summary": "Get all Studymaterials",
-        "responses": {
-          "200": {
-            "description": "List of Studymaterials retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Studymaterial"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/studymaterial/{id}": {
-      "get": {
-        "tags": [
-          "Studymaterial"
-        ],
-        "summary": "Get Studymaterial by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Studymaterial ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Studymaterial retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studymaterial"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Studymaterial not found"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Studymaterial"
-        ],
-        "summary": "Update Studymaterial",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Studymaterial ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StudymaterialUpdate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Studymaterial updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studymaterial"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Studymaterial not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Studymaterial"
-        ],
-        "summary": "Delete Studymaterial",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Studymaterial ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Studymaterial deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studymaterial"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Studymaterial not found"
-          }
-        }
-      }
-    },
-    "/exam": {
-      "post": {
-        "tags": [
-          "Exam"
-        ],
-        "summary": "Create a new Exam",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExamCreate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Exam created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Exam"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Exam"
-        ],
-        "summary": "Get all Exams",
-        "responses": {
-          "200": {
-            "description": "List of Exams retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Exam"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/exam/{id}": {
-      "get": {
-        "tags": [
-          "Exam"
-        ],
-        "summary": "Get Exam by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Exam ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Exam retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Exam"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Exam not found"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Exam"
-        ],
-        "summary": "Update Exam",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Exam ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ExamUpdate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Exam updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Exam"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Exam not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Exam"
-        ],
-        "summary": "Delete Exam",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Exam ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Exam deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Exam"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Exam not found"
-          }
-        }
-      }
-    },
-    "/studyschedule": {
-      "post": {
-        "tags": [
-          "Studyschedule"
-        ],
-        "summary": "Create a new Studyschedule",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StudyscheduleCreate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Studyschedule created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studyschedule"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Studyschedule"
-        ],
-        "summary": "Get all Studyschedules",
-        "responses": {
-          "200": {
-            "description": "List of Studyschedules retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Studyschedule"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/studyschedule/{id}": {
-      "get": {
-        "tags": [
-          "Studyschedule"
-        ],
-        "summary": "Get Studyschedule by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Studyschedule ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Studyschedule retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studyschedule"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Studyschedule not found"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Studyschedule"
-        ],
-        "summary": "Update Studyschedule",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Studyschedule ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StudyscheduleUpdate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Studyschedule updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studyschedule"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Studyschedule not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Studyschedule"
-        ],
-        "summary": "Delete Studyschedule",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Studyschedule ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Studyschedule deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Studyschedule"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Studyschedule not found"
-          }
-        }
-      }
-    },
-
+    }
+  },
   "components": {
     "schemas": {
-      "Support": {
+      "SessionsItem": {
         "type": "object",
         "properties": {
           "_id": {
             "type": "string",
             "description": "MongoDB ObjectId"
           },
-          "userId": {
+          "startTime": {
             "type": "string",
-            "description": "userId reference ID"
+            "format": "date-time",
+            "description": "startTime field"
           },
-          "subject": {
+          "endTime": {
             "type": "string",
-            "description": "subject field"
+            "format": "date-time",
+            "description": "endTime field"
           },
-          "message": {
-            "type": "string",
-            "description": "message field"
+          "durationMinutes": {
+            "type": "number",
+            "description": "durationMinutes field"
           },
-          "status": {
-            "type": "string",
-            "description": "status field"
-          },
-          "attachments": {
+          "topics": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Array of attachments items"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp"
-          }
-        },
-        "required": [
-          "_id",
-          "message"
-        ]
-      },
-      "SupportCreate": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "description": "userId reference ID"
-          },
-          "subject": {
-            "type": "string",
-            "description": "subject field"
-          },
-          "message": {
-            "type": "string",
-            "description": "message field"
-          },
-          "status": {
-            "type": "string",
-            "description": "status field"
-          },
-          "attachments": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of attachments items"
-          }
-        },
-        "required": [
-          "message"
-        ]
-      },
-      "SupportUpdate": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "description": "userId reference ID"
-          },
-          "subject": {
-            "type": "string",
-            "description": "subject field"
-          },
-          "message": {
-            "type": "string",
-            "description": "message field"
-          },
-          "status": {
-            "type": "string",
-            "description": "status field"
-          },
-          "attachments": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of attachments items"
-          }
-        }
-      },
-      "Onboardingscreen": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "MongoDB ObjectId"
-          },
-          "title": {
-            "type": "string",
-            "description": "title field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "imageUrl": {
-            "type": "string",
-            "description": "imageUrl field"
-          },
-          "order": {
-            "type": "number",
-            "description": "order field"
-          },
-          "actionText": {
-            "type": "string",
-            "description": "actionText field"
-          },
-          "skipEnabled": {
-            "type": "boolean",
-            "description": "skipEnabled field"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "isActive field"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp"
-          }
-        },
-        "required": [
-          "_id",
-          "title",
-          "description",
-          "imageUrl",
-          "order"
-        ]
-      },
-      "OnboardingscreenCreate": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "title field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "imageUrl": {
-            "type": "string",
-            "description": "imageUrl field"
-          },
-          "order": {
-            "type": "number",
-            "description": "order field"
-          },
-          "actionText": {
-            "type": "string",
-            "description": "actionText field"
-          },
-          "skipEnabled": {
-            "type": "boolean",
-            "description": "skipEnabled field"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "isActive field"
-          }
-        },
-        "required": [
-          "title",
-          "description",
-          "imageUrl",
-          "order"
-        ]
-      },
-      "OnboardingscreenUpdate": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "title field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "imageUrl": {
-            "type": "string",
-            "description": "imageUrl field"
-          },
-          "order": {
-            "type": "number",
-            "description": "order field"
-          },
-          "actionText": {
-            "type": "string",
-            "description": "actionText field"
-          },
-          "skipEnabled": {
-            "type": "boolean",
-            "description": "skipEnabled field"
-          },
-          "isActive": {
-            "type": "boolean",
-            "description": "isActive field"
-          }
-        }
-      },
-      "AnswersItem": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "MongoDB ObjectId"
-          },
-          "userId": {
-            "type": "string",
-            "description": "userId reference ID"
-          },
-          "User": {
-            "type": "string",
-            "description": "User field"
+            "description": "Array of topics items"
           },
           "string": {
             "type": "string",
             "description": "string field"
           },
-          "date": {
-            "type": "string",
-            "description": "date field"
-          },
           "array": {
-            "type": "object",
-            "description": "array object"
+            "type": "string",
+            "description": "array reference ID"
+          },
+          "Question": {
+            "type": "string",
+            "description": "Question field"
           },
           "createdAt": {
             "type": "string",
@@ -1584,651 +281,24 @@
           "_id"
         ]
       },
-      "Community": {
+      "WeakTopicsItem": {
         "type": "object",
         "properties": {
           "_id": {
             "type": "string",
             "description": "MongoDB ObjectId"
           },
-          "userId": {
+          "topic": {
             "type": "string",
-            "description": "userId reference ID"
+            "description": "topic field"
           },
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "avatarUrl": {
-            "type": "string",
-            "description": "avatarUrl field"
-          },
-          "question": {
-            "type": "string",
-            "description": "question field"
-          },
-          "details": {
-            "type": "string",
-            "description": "details field"
-          },
-          "answers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AnswersItem"
-            },
-            "description": "Array of answers objects"
-          },
-          "answersCount": {
+          "accuracy": {
             "type": "number",
-            "description": "answersCount field"
+            "description": "accuracy field"
           },
-          "likesCount": {
+          "totalAttempts": {
             "type": "number",
-            "description": "likesCount field"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of tags items"
-          },
-          "status": {
-            "type": "string",
-            "description": "status field"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp"
-          }
-        },
-        "required": [
-          "_id",
-          "name",
-          "question"
-        ]
-      },
-      "CommunityCreate": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "description": "userId reference ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "avatarUrl": {
-            "type": "string",
-            "description": "avatarUrl field"
-          },
-          "question": {
-            "type": "string",
-            "description": "question field"
-          },
-          "details": {
-            "type": "string",
-            "description": "details field"
-          },
-          "answers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AnswersItem"
-            },
-            "description": "Array of answers objects"
-          },
-          "answersCount": {
-            "type": "number",
-            "description": "answersCount field"
-          },
-          "likesCount": {
-            "type": "number",
-            "description": "likesCount field"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of tags items"
-          },
-          "status": {
-            "type": "string",
-            "description": "status field"
-          }
-        },
-        "required": [
-          "name",
-          "question"
-        ]
-      },
-      "CommunityUpdate": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "description": "userId reference ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "avatarUrl": {
-            "type": "string",
-            "description": "avatarUrl field"
-          },
-          "question": {
-            "type": "string",
-            "description": "question field"
-          },
-          "details": {
-            "type": "string",
-            "description": "details field"
-          },
-          "answers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AnswersItem"
-            },
-            "description": "Array of answers objects"
-          },
-          "answersCount": {
-            "type": "number",
-            "description": "answersCount field"
-          },
-          "likesCount": {
-            "type": "number",
-            "description": "likesCount field"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of tags items"
-          },
-          "status": {
-            "type": "string",
-            "description": "status field"
-          }
-        }
-      },
-      "Studymaterial": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "MongoDB ObjectId"
-          },
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "category": {
-            "type": "string",
-            "description": "category field"
-          },
-          "size": {
-            "type": "string",
-            "description": "size field"
-          },
-          "uploadDate": {
-            "type": "string",
-            "format": "date-time",
-            "description": "uploadDate field"
-          },
-          "type": {
-            "type": "string",
-            "description": "type field"
-          },
-          "fileUrl": {
-            "type": "string",
-            "description": "fileUrl field"
-          },
-          "uploadedBy": {
-            "type": "string",
-            "description": "uploadedBy reference ID"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp"
-          }
-        },
-        "required": [
-          "_id",
-          "name",
-          "category",
-          "size",
-          "uploadDate",
-          "type",
-          "fileUrl",
-          "uploadedBy"
-        ]
-      },
-      "StudymaterialCreate": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "category": {
-            "type": "string",
-            "description": "category field"
-          },
-          "size": {
-            "type": "string",
-            "description": "size field"
-          },
-          "uploadDate": {
-            "type": "string",
-            "format": "date-time",
-            "description": "uploadDate field"
-          },
-          "type": {
-            "type": "string",
-            "description": "type field"
-          },
-          "fileUrl": {
-            "type": "string",
-            "description": "fileUrl field"
-          },
-          "uploadedBy": {
-            "type": "string",
-            "description": "uploadedBy reference ID"
-          }
-        },
-        "required": [
-          "name",
-          "category",
-          "size",
-          "uploadDate",
-          "type",
-          "fileUrl",
-          "uploadedBy"
-        ]
-      },
-      "StudymaterialUpdate": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "category": {
-            "type": "string",
-            "description": "category field"
-          },
-          "size": {
-            "type": "string",
-            "description": "size field"
-          },
-          "uploadDate": {
-            "type": "string",
-            "format": "date-time",
-            "description": "uploadDate field"
-          },
-          "type": {
-            "type": "string",
-            "description": "type field"
-          },
-          "fileUrl": {
-            "type": "string",
-            "description": "fileUrl field"
-          },
-          "uploadedBy": {
-            "type": "string",
-            "description": "uploadedBy reference ID"
-          }
-        }
-      },
-      "QuestionsItem": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "MongoDB ObjectId"
-          },
-          "questionText": {
-            "type": "string",
-            "description": "questionText field"
-          },
-          "options": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of options items"
-          },
-          "string": {
-            "type": "string",
-            "description": "string field"
-          },
-          "array": {
-            "type": "object",
-            "description": "array object"
-          },
-          "stemTitle": {
-            "type": "string",
-            "description": "stemTitle field"
-          },
-          "stemDescription": {
-            "type": "string",
-            "description": "stemDescription field"
-          },
-          "stemPicture": {
-            "type": "string",
-            "description": "stemPicture field"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp"
-          }
-        },
-        "required": [
-          "_id",
-          "questionText",
-          "stemTitle"
-        ]
-      },
-      "Exam": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "MongoDB ObjectId"
-          },
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "code": {
-            "type": "string",
-            "description": "code field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "isPublished": {
-            "type": "boolean",
-            "description": "isPublished field"
-          },
-          "durationMinutes": {
-            "type": "number",
-            "description": "durationMinutes field"
-          },
-          "passMark": {
-            "type": "number",
-            "description": "passMark field"
-          },
-          "questions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QuestionsItem"
-            },
-            "description": "Array of questions objects"
-          },
-          "stats": {
-            "type": "object",
-            "description": "stats object"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "createdBy field"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp"
-          }
-        },
-        "required": [
-          "_id",
-          "name",
-          "isPublished"
-        ]
-      },
-      "ExamCreate": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "code": {
-            "type": "string",
-            "description": "code field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "isPublished": {
-            "type": "boolean",
-            "description": "isPublished field"
-          },
-          "durationMinutes": {
-            "type": "number",
-            "description": "durationMinutes field"
-          },
-          "passMark": {
-            "type": "number",
-            "description": "passMark field"
-          },
-          "questions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QuestionsItem"
-            },
-            "description": "Array of questions objects"
-          },
-          "stats": {
-            "type": "object",
-            "description": "stats object"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "createdBy field"
-          }
-        },
-        "required": [
-          "name",
-          "isPublished"
-        ]
-      },
-      "ExamUpdate": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "name field"
-          },
-          "code": {
-            "type": "string",
-            "description": "code field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "isPublished": {
-            "type": "boolean",
-            "description": "isPublished field"
-          },
-          "durationMinutes": {
-            "type": "number",
-            "description": "durationMinutes field"
-          },
-          "passMark": {
-            "type": "number",
-            "description": "passMark field"
-          },
-          "questions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QuestionsItem"
-            },
-            "description": "Array of questions objects"
-          },
-          "stats": {
-            "type": "object",
-            "description": "stats object"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "createdBy field"
-          }
-        }
-      },
-      "Studyschedule": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "MongoDB ObjectId"
-          },
-          "calendar": {
-            "type": "string",
-            "format": "date-time",
-            "description": "calendar field"
-          },
-          "title": {
-            "type": "string",
-            "description": "title field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "createdBy reference ID"
-          },
-          "isDeleted": {
-            "type": "boolean",
-            "description": "isDeleted field"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Creation timestamp"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last update timestamp"
-          }
-        },
-        "required": [
-          "_id",
-          "calendar",
-          "title"
-        ]
-      },
-      "StudyscheduleCreate": {
-        "type": "object",
-        "properties": {
-          "calendar": {
-            "type": "string",
-            "format": "date-time",
-            "description": "calendar field"
-          },
-          "title": {
-            "type": "string",
-            "description": "title field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "createdBy reference ID"
-          },
-          "isDeleted": {
-            "type": "boolean",
-            "description": "isDeleted field"
-          }
-        },
-        "required": [
-          "calendar",
-          "title"
-        ]
-      },
-      "StudyscheduleUpdate": {
-        "type": "object",
-        "properties": {
-          "calendar": {
-            "type": "string",
-            "format": "date-time",
-            "description": "calendar field"
-          },
-          "title": {
-            "type": "string",
-            "description": "title field"
-          },
-          "description": {
-            "type": "string",
-            "description": "description field"
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "createdBy reference ID"
-          },
-          "isDeleted": {
-            "type": "boolean",
-            "description": "isDeleted field"
-          }
-        }
-      },
-
-      "VariantsItem": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "description": "MongoDB ObjectId"
-          },
-          "size": {
-            "type": "string",
-            "description": "size field"
-          },
-          "color": {
-            "type": "string",
-            "description": "color field"
-          },
-          "price": {
-            "type": "number",
-            "description": "price field"
-          },
-          "stock": {
-            "type": "number",
-            "description": "stock field"
+            "description": "totalAttempts field"
           },
           "createdAt": {
             "type": "string",
@@ -2245,42 +315,50 @@
           "_id"
         ]
       },
-      "Product": {
+      "Studyprogress": {
         "type": "object",
         "properties": {
           "_id": {
             "type": "string",
             "description": "MongoDB ObjectId"
           },
-          "name": {
+          "studentId": {
             "type": "string",
-            "description": "name field"
+            "description": "studentId reference ID"
           },
-          "description": {
+          "examId": {
             "type": "string",
-            "description": "description field"
+            "description": "examId reference ID"
           },
-          "category": {
-            "type": "string",
-            "description": "category field"
-          },
-          "variants": {
+          "sessions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VariantsItem"
+              "$ref": "#/components/schemas/SessionsItem"
             },
-            "description": "Array of variants objects"
+            "description": "Array of sessions objects"
           },
-          "images": {
+          "totalStudyTime": {
+            "type": "number",
+            "description": "totalStudyTime field"
+          },
+          "lastStudied": {
+            "type": "string",
+            "format": "date-time",
+            "description": "lastStudied field"
+          },
+          "bookmarks": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Array of images items"
+            "description": "Array of bookmarks references"
           },
-          "isActive": {
-            "type": "boolean",
-            "description": "isActive field"
+          "weakTopics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WeakTopicsItem"
+            },
+            "description": "Array of weakTopics objects"
           },
           "createdAt": {
             "type": "string",
@@ -2294,83 +372,96 @@
           }
         },
         "required": [
-          "_id",
-          "name"
+          "_id"
         ]
       },
-      "ProductCreate": {
+      "StudyprogressCreate": {
         "type": "object",
         "properties": {
-          "name": {
+          "studentId": {
             "type": "string",
-            "description": "name field"
+            "description": "studentId reference ID"
           },
-          "description": {
+          "examId": {
             "type": "string",
-            "description": "description field"
+            "description": "examId reference ID"
           },
-          "category": {
-            "type": "string",
-            "description": "category field"
-          },
-          "variants": {
+          "sessions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VariantsItem"
+              "$ref": "#/components/schemas/SessionsItem"
             },
-            "description": "Array of variants objects"
+            "description": "Array of sessions objects"
           },
-          "images": {
+          "totalStudyTime": {
+            "type": "number",
+            "description": "totalStudyTime field"
+          },
+          "lastStudied": {
+            "type": "string",
+            "format": "date-time",
+            "description": "lastStudied field"
+          },
+          "bookmarks": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Array of images items"
+            "description": "Array of bookmarks references"
           },
-          "isActive": {
-            "type": "boolean",
-            "description": "isActive field"
+          "weakTopics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WeakTopicsItem"
+            },
+            "description": "Array of weakTopics objects"
           }
         },
-        "required": [
-          "name"
-        ]
+        "required": []
       },
-      "ProductUpdate": {
+      "StudyprogressUpdate": {
         "type": "object",
         "properties": {
-          "name": {
+          "studentId": {
             "type": "string",
-            "description": "name field"
+            "description": "studentId reference ID"
           },
-          "description": {
+          "examId": {
             "type": "string",
-            "description": "description field"
+            "description": "examId reference ID"
           },
-          "category": {
-            "type": "string",
-            "description": "category field"
-          },
-          "variants": {
+          "sessions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VariantsItem"
+              "$ref": "#/components/schemas/SessionsItem"
             },
-            "description": "Array of variants objects"
+            "description": "Array of sessions objects"
           },
-          "images": {
+          "totalStudyTime": {
+            "type": "number",
+            "description": "totalStudyTime field"
+          },
+          "lastStudied": {
+            "type": "string",
+            "format": "date-time",
+            "description": "lastStudied field"
+          },
+          "bookmarks": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Array of images items"
+            "description": "Array of bookmarks references"
           },
-          "isActive": {
-            "type": "boolean",
-            "description": "isActive field"
+          "weakTopics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WeakTopicsItem"
+            },
+            "description": "Array of weakTopics objects"
           }
         }
       }
     }
   }
-  }
+}
