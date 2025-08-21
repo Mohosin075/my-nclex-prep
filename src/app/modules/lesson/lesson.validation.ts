@@ -1,6 +1,33 @@
 import { z } from 'zod'
 import { defaultStats } from './lesson.constants'
 import { LessonType } from '../../../enum/lesson'
+import { OptionSchema } from '../exam/exam.validation'
+
+// Enums
+export const LessonQuestionTypeEnum = z.enum(['chart_based', 'image_based'])
+
+export const LessonQuestionSchema = z.object({
+  body: z.object({
+    questions: z.array(
+      z.object({
+        type: LessonQuestionTypeEnum,
+        stems: z
+          .array(z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId'))
+          .optional(),
+        questionText: z.string().min(1, 'Question text is required'),
+        options: z.array(OptionSchema).optional(),
+        allowMultiple: z.boolean().optional().default(false),
+        numberAnswer: z.number().optional(),
+        correctAnswer: z.number().optional(),
+        rearrangeItems: z.array(z.string()).optional(),
+        correctOrder: z.array(z.number()).optional(),
+        points: z.number().optional().default(1),
+        tags: z.array(z.string()).optional(),
+        explanation: z.string().optional(),
+      }),
+    ),
+  }),
+})
 
 // Lesson schema (main)
 export const LessonSchema = z.object({

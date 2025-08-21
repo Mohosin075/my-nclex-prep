@@ -6,7 +6,7 @@ import fileUploadHandler from '../../middleware/fileUploadHandler'
 import { S3Helper } from '../../../helpers/image/s3helper'
 import ApiError from '../../../errors/ApiError'
 import { StatusCodes } from 'http-status-codes'
-import { LessonSchema } from './lesson.validation'
+import { LessonQuestionSchema, LessonSchema } from './lesson.validation'
 import { LessonControllers } from '../lesson/lesson.controller'
 import { ExamControllers } from '../exam/exam.controller'
 import { QuestionSchema } from '../exam/exam.validation'
@@ -78,7 +78,7 @@ router.route('/stems').post(
 // --------------------
 router.route('/questions').post(
   auth(USER_ROLES.ADMIN),
-  validateRequest(QuestionSchema),
+  validateRequest(LessonQuestionSchema),
 
   (req, res, next) => {
     const payload = req.body

@@ -6,6 +6,8 @@ export enum QuestionType {
   DROPDOWN = 'dropdown',
   NUMBER = 'number',
   REARRANGE = 'rearrange',
+  CHART_BASED = 'chart_based',
+  IMAGE_BASED = 'image_based',
 }
 
 export enum ExamType {
