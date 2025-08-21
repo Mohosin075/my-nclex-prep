@@ -7,9 +7,9 @@ import { USER_ROLES } from '../../../enum/user'
 
 const router = express.Router()
 
-router.get('/', auth(USER_ROLES.ADMIN), MnemonicController.getAllMnemonics)
+router.get('/', MnemonicController.getAllMnemonics)
 
-router.get('/:id', auth(USER_ROLES.ADMIN), MnemonicController.getSingleMnemonic)
+router.get('/:id', MnemonicController.getSingleMnemonic)
 
 router.post(
   '/',
@@ -17,14 +17,6 @@ router.post(
 
   validateRequest(MnemonicValidations.create),
   MnemonicController.createMnemonic,
-)
-
-router.patch(
-  '/:id',
-  auth(USER_ROLES.ADMIN),
-
-  validateRequest(MnemonicValidations.update),
-  MnemonicController.updateMnemonic,
 )
 
 router.delete('/:id', auth(USER_ROLES.ADMIN), MnemonicController.deleteMnemonic)
