@@ -7,6 +7,7 @@ import { IPaginationOptions } from '../../../interfaces/pagination'
 import { paginationHelper } from '../../../helpers/paginationHelper'
 import { categorySearchableFields } from './category.constants'
 import { Types } from 'mongoose'
+import { S3Helper } from '../../../helpers/image/s3helper'
 
 const createCategory = async (
   user: JwtPayload,
@@ -129,6 +130,17 @@ const updateCategory = async (
 const deleteCategory = async (id: string): Promise<ICategory> => {
   if (!Types.ObjectId.isValid(id)) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Category ID')
+  }
+
+  const isExistCategory = await Category.findById(id)
+  if (!isExistCategory) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Category not found')
+  }
+
+  if (isExistCategory.image) {
+    const url = new URL(isExistCategory.image)
+    const key = url.pathname.substring(1)
+    await S3Helper.deleteFromS3(key)
   }
 
   const result = await Category.findByIdAndDelete(id)
