@@ -8,6 +8,11 @@ const stemSchema = new Schema<IStem>(
     stemTitle: { type: String },
     stemDescription: { type: String },
     stemPicture: { type: String || null, default: null },
+    table: [{
+      key: { type: String, required: true },
+      value: { type: Schema.Types.Mixed },
+      type: { type: String, enum: ['text', 'number', 'boolean'], default: 'text' }
+    }]
   },
   { timestamps: true },
 )

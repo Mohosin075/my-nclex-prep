@@ -21,7 +21,16 @@ export const StemSchema = z.object({
       z.object({
         stemTitle: z.string().optional(),
         stemDescription: z.string().optional(),
-        stemPicture: z.string().url().optional(),
+        stemPicture: z.string().url().nullable().optional(), // allow null or URL
+        table: z
+          .array(
+            z.object({
+              key: z.string(),
+              value: z.union([z.string(), z.number(), z.boolean(), z.null()]), // Mixed support
+              type: z.enum(['text', 'number', 'boolean']).default('text'),
+            }),
+          )
+          .optional(),
       }),
     ),
   }),
@@ -67,8 +76,6 @@ export const ExamStatsSchema = z.object({
   avgScore: z.number().optional().default(0),
   lastAttemptAt: z.string().datetime().optional(),
 })
-
-
 
 // Exam schema (main)
 export const ExamSchema = z.object({

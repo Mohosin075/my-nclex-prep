@@ -10,10 +10,14 @@ export interface IExamFilter {
 
 // Stem model
 export interface IStem {
-  _id?: string
   stemTitle?: string
   stemDescription?: string
   stemPicture?: string | null
+  table?: {
+    key: string
+    value: any
+    type: 'text' | 'number' | 'boolean'
+  }[]
 }
 
 export interface IOption {
