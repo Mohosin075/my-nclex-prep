@@ -11,7 +11,7 @@ import { StudymaterialRoutes } from '../app/modules/studymaterial/studymaterial.
 import { StudyscheduleRoutes } from '../app/modules/studyschedule/studyschedule.route'
 import { ExamRoutes } from '../app/modules/exam/exam.route'
 import { LessonRoutes } from '../app/modules/lesson/lesson.route'
-import { StudyprogressRoutes } from '../app/modules/studyprogress/studyprogress.route'
+import { StudyProgressRoutes } from '../app/modules/studyprogress/studyprogress.route'
 import { CategoryRoutes } from '../app/modules/category/category.route'
 import { MnemonicRoutes } from '../app/modules/mnemonic/mnemonic.route'
 
@@ -34,7 +34,7 @@ const apiRoutes: { path: string; route: Router }[] = [
   { path: '/exam', route: ExamRoutes },
   { path: '/lesson', route: LessonRoutes },
 
-  { path: '/studyprogress', route: StudyprogressRoutes },
+  { path: '/studyprogress', route: StudyProgressRoutes },
 
   { path: '/category', route: CategoryRoutes },
   { path: '/mnemonic', route: MnemonicRoutes },

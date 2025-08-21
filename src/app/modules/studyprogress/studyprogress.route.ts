@@ -1,30 +1,42 @@
 import express from 'express'
-import { StudyprogressController } from './studyprogress.controller'
-import { StudyprogressValidations } from './studyprogress.validation'
-import validateRequest from '../../middleware/validateRequest'
 import auth from '../../middleware/auth'
 import { USER_ROLES } from '../../../enum/user'
+import { StudyProgressControllers } from './studyprogress.controller'
 
 const router = express.Router()
 
-// Admin only routes
+// Session management
 router
-  .route('/')
-  .get(auth(USER_ROLES.ADMIN), StudyprogressController.getAllStudyprogresss)
-  .post(
-    auth(USER_ROLES.ADMIN),
-    validateRequest(StudyprogressValidations.create),
-    StudyprogressController.createStudyprogress,
-  )
-  .patch(
-    auth(USER_ROLES.ADMIN, USER_ROLES.STUDENT),
-    // validateRequest(StudyprogressValidations.update),
-    StudyprogressController.updateStudyprogress,
-  )
+  .route('/:studentId/:examId/session/start')
+  .post(auth(USER_ROLES.STUDENT), StudyProgressControllers.startSession)
 
 router
-  .route('/:id')
-  .get(auth(USER_ROLES.ADMIN), StudyprogressController.getSingleStudyprogress)
-  .delete(auth(USER_ROLES.ADMIN), StudyprogressController.deleteStudyprogress)
+  .route('/:studentId/:examId/session/end')
+  .post(auth(USER_ROLES.STUDENT), StudyProgressControllers.endSession)
 
-export const StudyprogressRoutes = router
+// Question tracking
+router
+  .route('/:studentId/:examId/question/:questionId/complete')
+  .post(auth(USER_ROLES.STUDENT), StudyProgressControllers.completeQuestion)
+
+// Bookmarks
+router
+  .route('/:studentId/:examId/bookmarks')
+  .get(auth(USER_ROLES.STUDENT), StudyProgressControllers.getBookmarks)
+
+router
+  .route('/:studentId/:examId/bookmark/:questionId')
+  .post(auth(USER_ROLES.STUDENT), StudyProgressControllers.addBookmark)
+  .delete(auth(USER_ROLES.STUDENT), StudyProgressControllers.removeBookmark)
+
+// Statistics
+router
+  .route('/:studentId/:examId/stats')
+  .get(auth(USER_ROLES.STUDENT), StudyProgressControllers.getStats)
+
+// Progress overview
+router
+  .route('/:studentId/:examId')
+  .get(auth(USER_ROLES.STUDENT), StudyProgressControllers.getStudyProgress)
+
+export const StudyProgressRoutes = router

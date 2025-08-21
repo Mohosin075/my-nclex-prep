@@ -1,88 +1,145 @@
-import { Request, Response } from 'express';
-import { StudyprogressServices } from './studyprogress.service';
-import catchAsync from '../../../shared/catchAsync';
-import sendResponse from '../../../shared/sendResponse';
-import { StatusCodes } from 'http-status-codes';
-import pick from '../../../shared/pick';
-import { studyprogressFilterables } from './studyprogress.constants';
-import { paginationFields } from '../../../interfaces/pagination';
+import { Request, Response } from 'express'
+import catchAsync from '../../../shared/catchAsync'
+import sendResponse from '../../../shared/sendResponse'
+import { StatusCodes } from 'http-status-codes'
+import { StudyProgressServices } from './studyprogress.service'
 
-const createStudyprogress = catchAsync(async (req: Request, res: Response) => {
-  const studyprogressData = req.body;
+const startSession = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId } = req.params
+  const { topics } = req.body
 
-  const result = await StudyprogressServices.createStudyprogress(
-    req.user!,
-    studyprogressData
-  );
-
-  sendResponse(res, {
-    statusCode: StatusCodes.CREATED,
-    success: true,
-    message: 'Studyprogress created successfully',
-    data: result,
-  });
-});
-
-const updateStudyprogress = catchAsync(async (req: Request, res: Response) => {
-  const studyprogressData = req.body;
-  const user = req.user
-
-  const result = await StudyprogressServices.updateStudyprogress(user, studyprogressData);
+  const result = await StudyProgressServices.startSession(
+    studentId,
+    examId,
+    topics,
+  )
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Studyprogress updated successfully',
+    message: 'Study session started successfully',
     data: result,
-  });
-});
+  })
+})
 
-const getSingleStudyprogress = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await StudyprogressServices.getSingleStudyprogress(id);
+const endSession = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId } = req.params
+
+  const result = await StudyProgressServices.endSession(studentId, examId)
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Studyprogress retrieved successfully',
+    message: 'Study session ended successfully',
     data: result,
-  });
-});
+  })
+})
 
-const getAllStudyprogresss = catchAsync(async (req: Request, res: Response) => {
-  const filterables = pick(req.query, studyprogressFilterables);
-  const pagination = pick(req.query, paginationFields);
+const completeQuestion = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId, questionId } = req.params
+  const { isCorrect, notes } = req.body
 
-  const result = await StudyprogressServices.getAllStudyprogresss(
-    req.user!,
-    filterables,
-    pagination
-  );
+  const result = await StudyProgressServices.completeQuestion(
+    studentId,
+    examId,
+    questionId,
+    isCorrect,
+    notes,
+  )
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Studyprogresss retrieved successfully',
+    message: 'Question completion recorded successfully',
     data: result,
-  });
-});
+  })
+})
 
-const deleteStudyprogress = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await StudyprogressServices.deleteStudyprogress(id);
+const addBookmark = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId, questionId } = req.params
+
+  const result = await StudyProgressServices.addBookmark(
+    studentId,
+    examId,
+    questionId,
+  )
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Studyprogress deleted successfully',
+    message: 'Question bookmarked successfully',
     data: result,
-  });
-});
+  })
+})
 
-export const StudyprogressController = {
-  createStudyprogress,
-  updateStudyprogress,
-  getSingleStudyprogress,
-  getAllStudyprogresss,
-  deleteStudyprogress,
-};
+const removeBookmark = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId, questionId } = req.params
+
+  const result = await StudyProgressServices.removeBookmark(
+    studentId,
+    examId,
+    questionId,
+  )
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Bookmark removed successfully',
+    data: result,
+  })
+})
+
+const getBookmarks = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId } = req.params
+
+  const result = await StudyProgressServices.getBookmarks(studentId, examId)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Bookmarks retrieved successfully',
+    data: result,
+  })
+})
+
+const getStats = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId } = req.params
+
+  const result = await StudyProgressServices.getStats(studentId, examId)
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Study statistics retrieved successfully',
+    data: result,
+  })
+})
+
+const getStudyProgress = catchAsync(async (req: Request, res: Response) => {
+  const { studentId, examId } = req.params
+  const pagination = req.query
+
+  const result = await StudyProgressServices.getStudyProgress(
+    studentId,
+    examId,
+    pagination,
+  )
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Study progress retrieved successfully',
+    data: result,
+  })
+})
+
+export const StudyProgressControllers = {
+  startSession,
+  endSession,
+  completeQuestion,
+  addBookmark,
+  removeBookmark,
+  getBookmarks,
+  getStats,
+  getStudyProgress,
+}

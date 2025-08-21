@@ -5,7 +5,7 @@ const categorySchema = new Schema<ICategory, CategoryModel>(
   {
     name: { type: String },
     description: { type: String },
-    image: { type: String },
+    image: { type: String , default : null},
   },
   {
     timestamps: true,

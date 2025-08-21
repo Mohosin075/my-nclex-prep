@@ -1,31 +1,35 @@
-import { Model, Types } from 'mongoose'
+import { Document, Types } from 'mongoose'
 
-export interface SessionsItem {
-  startTime: Date
-  endTime?: Date
-  durationMinutes: number
-  topics: string[]
-  string: string
-  array: Types.ObjectId
-  Question: string
-}
-
-export interface WeakTopicsItem {
+export interface IWeakTopic {
   topic: string
   accuracy: number
   totalAttempts: number
 }
 
-export interface IStudyprogress {
-  _id: Types.ObjectId
-  studentId: Types.ObjectId
-  examId: Types.ObjectId
-  sessions: SessionsItem[]
-  totalStudyTime: number
-  lastStudied: Date
-  bookmarks: Types.ObjectId[]
-  weakTopics: WeakTopicsItem[]
-  status: 'active' | 'completed' | 'paused'
+export interface ISession {
+  startTime: Date
+  endTime: Date | null
+  durationMinutes: number
+  topics: string[]
+  notes: string
+  completedQuestionId: Types.ObjectId | null
+  questionNotes: string
 }
 
-export type StudyprogressModel = Model<IStudyprogress, {}, {}>
+export interface IStudyprogress extends Document {
+  studentId: Types.ObjectId
+  examId: Types.ObjectId
+  sessions: ISession[]
+  totalStudyTime: number
+  lastStudied: Date | null
+  bookmarks: Types.ObjectId[]
+  weakTopics: IWeakTopic[]
+  status: 'active' | 'completed' | 'paused'
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IStudyprogressFilter {
+  searchTerm?: string
+  status?: string
+}

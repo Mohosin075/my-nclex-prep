@@ -1,168 +1,228 @@
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../../../errors/ApiError'
-import { IStudyprogress } from './studyprogress.interface'
-import { Studyprogress } from './studyprogress.model'
 import { JwtPayload } from 'jsonwebtoken'
 import { IPaginationOptions } from '../../../interfaces/pagination'
 import { paginationHelper } from '../../../helpers/paginationHelper'
-import { studyprogressSearchableFields } from './studyprogress.constants'
-import { Types } from 'mongoose'
+import mongoose, { Types } from 'mongoose'
+import { IStudyprogress } from './studyprogress.interface'
+import { Studyprogress } from './studyprogress.model'
+import { Exam, Question } from '../exam/exam.model'
+import { Lesson } from '../lesson/lesson.model'
 
-const createStudyprogress = async (
-  user: JwtPayload,
-  payload: IStudyprogress,
-): Promise<IStudyprogress> => {
-  try {
-    const result = await Studyprogress.create(payload)
-    if (!result) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        'Failed to create Studyprogress, please try again with valid data.',
-      )
-    }
+const startSession = async (
+  studentId: string,
+  examId: string,
+  topics: string[] = [],
+) => {
+  const session = {
+    startTime: new Date(),
+    endTime: null,
+    durationMinutes: 0,
+    topics,
+    notes: '',
+    completedQuestionId: null,
+    questionNotes: '',
+  }
 
-    return result
-  } catch (error: any) {
-    if (error.code === 11000) {
-      throw new ApiError(StatusCodes.CONFLICT, 'Duplicate entry found')
+  let progress = await Studyprogress.findOne({ studentId, examId })
+
+  if (!progress) {
+    progress = new Studyprogress({
+      studentId: new Types.ObjectId(studentId),
+      examId: new Types.ObjectId(examId),
+      sessions: [session],
+      status: 'active',
+    })
+  } else {
+    progress.sessions.push(session)
+    progress.status = 'active'
+  }
+
+  progress.lastStudied = new Date()
+  return await progress.save()
+}
+
+const endSession = async (studentId: string, examId: string) => {
+  const progress = await Studyprogress.findOne({ studentId, examId })
+  if (!progress || progress.sessions.length === 0) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No active session found')
+  }
+
+  const currentSession = progress.sessions[progress.sessions.length - 1]
+  const endTime = new Date()
+  const durationMinutes = Math.round(
+    (endTime.getTime() - currentSession.startTime.getTime()) / (1000 * 60),
+  )
+
+  currentSession.endTime = endTime
+  currentSession.durationMinutes = durationMinutes
+
+  progress.totalStudyTime += durationMinutes
+  progress.lastStudied = endTime
+
+  return await progress.save()
+}
+
+const completeQuestion = async (
+  studentId: string,
+  examId: string,
+  questionId: string,
+  isCorrect: boolean,
+  notes: string = '',
+) => {
+  const progress = await Studyprogress.findOne({ studentId, examId })
+  if (!progress || progress.sessions.length === 0) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'No active session found')
+  }
+
+  const currentSession = progress.sessions[progress.sessions.length - 1]
+  currentSession.completedQuestionId = new Types.ObjectId(questionId)
+  currentSession.questionNotes = notes
+
+  // Update weak topics if answer was incorrect
+  if (!isCorrect) {
+    await updateWeakTopics(progress, questionId)
+  }
+
+  return await progress.save()
+}
+
+const updateWeakTopics = async (
+  progress: IStudyprogress,
+  questionId: string,
+) => {
+  const question = await Question.findById(questionId).select('tags')
+  if (!question || !question.tags || question.tags.length === 0) return
+
+  question.tags.forEach((tag: string) => {
+    const existingTopic = progress.weakTopics.find(wt => wt.topic === tag)
+
+    if (existingTopic) {
+      existingTopic.totalAttempts += 1
+      existingTopic.accuracy =
+        (existingTopic.accuracy * (existingTopic.totalAttempts - 1) + 0) /
+        existingTopic.totalAttempts
+    } else {
+      progress.weakTopics.push({
+        topic: tag,
+        accuracy: 0,
+        totalAttempts: 1,
+      })
     }
-    throw error
+  })
+}
+
+const addBookmark = async (
+  studentId: string,
+  examId: string,
+  questionId: string,
+) => {
+  const progress = await Studyprogress.findOne({ studentId, examId })
+  if (!progress) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Progress not found')
+  }
+
+  const questionObjectId = new Types.ObjectId(questionId)
+  if (!progress.bookmarks.includes(questionObjectId)) {
+    progress.bookmarks.push(questionObjectId)
+  }
+
+  return await progress.save()
+}
+
+const removeBookmark = async (
+  studentId: string,
+  examId: string,
+  questionId: string,
+) => {
+  const progress = await Studyprogress.findOne({ studentId, examId })
+  if (!progress) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Progress not found')
+  }
+
+  progress.bookmarks = progress.bookmarks.filter(
+    (id: any) => id.toString() !== questionId,
+  )
+
+  return await progress.save()
+}
+
+const getBookmarks = async (studentId: string, examId: string) => {
+  const progress = await Studyprogress.findOne({ studentId, examId }).populate({
+    path: 'bookmarks',
+    populate: {
+      path: 'stems',
+      model: 'Stem',
+    },
+  })
+
+  return progress?.bookmarks || []
+}
+
+const getStats = async (studentId: string, examId: string) => {
+  const progress = await Studyprogress.findOne({ studentId, examId })
+
+  console.log(examId)
+
+  const totalQuestion = await Lesson.findById(examId).estimatedDocumentCount()
+
+  if (!progress) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Progress not found')
+  }
+
+  return {
+    totalStudyTime: progress.totalStudyTime,
+    totalSessions: progress.sessions.length,
+    weakTopics: progress.weakTopics,
+    bookmarksCount: progress.bookmarks.length,
+    lastStudied: progress.lastStudied,
+    totalQuestion,
+    progress: progress.sessions.length,
   }
 }
 
-const getAllStudyprogresss = async (
-  user: JwtPayload,
-  filterables: any,
+const getStudyProgress = async (
+  studentId: string,
+  examId: string,
   pagination: IPaginationOptions,
 ) => {
-  const { searchTerm, ...filterData } = filterables
+  const progress = await Studyprogress.findOne({ studentId, examId })
+  if (!progress) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Study progress not found')
+  }
+
   const { page, skip, limit, sortBy, sortOrder } =
     paginationHelper.calculatePagination(pagination)
 
-  const andConditions = []
-
-  // Search functionality
-  if (searchTerm) {
-    andConditions.push({
-      $or: studyprogressSearchableFields.map(field => ({
-        [field]: {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      })),
-    })
-  }
-
-  // Filter functionality
-  if (Object.keys(filterData).length) {
-    andConditions.push({
-      $and: Object.entries(filterData).map(([key, value]) => ({
-        [key]: value,
-      })),
-    })
-  }
-
-  const whereConditions = andConditions.length ? { $and: andConditions } : {}
-
-  const [result, total] = await Promise.all([
-    Studyprogress.find(whereConditions)
-      .skip(skip)
-      .limit(limit)
-      .sort({ [sortBy]: sortOrder })
-      .populate('studentId')
-      .populate('examId')
-      .populate('bookmarks'),
-    Studyprogress.countDocuments(whereConditions),
-  ])
+  // Get sessions with pagination
+  const sessions = progress.sessions
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.startTime).getTime() - new Date(a.startTime).getTime(),
+    )
+    .slice(skip, skip + limit)
 
   return {
     meta: {
       page,
       limit,
-      total,
-      totalPages: Math.ceil(total / limit),
+      total: progress.sessions.length,
+      totalPages: Math.ceil(progress.sessions.length / limit),
     },
-    data: result,
+    data: {
+      progress,
+      sessions,
+    },
   }
 }
 
-const getSingleStudyprogress = async (id: string): Promise<IStudyprogress> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyprogress ID')
-  }
-
-  const result = await Studyprogress.findById(id)
-    .populate('studentId')
-    .populate('examId')
-    .populate('bookmarks')
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested studyprogress not found, please try again with valid id',
-    )
-  }
-
-  return result
-}
-
-const updateStudyprogress = async (
-  user: JwtPayload | undefined,
-  payload: Partial<IStudyprogress>,
-): Promise<IStudyprogress | null> => {
-  const isStudyProgressExist = await Studyprogress.findOne({
-    studentId: user?.authId,
-  });
-
-  console.log(isStudyProgressExist)
-
-  if (isStudyProgressExist) {
-    const result = await Studyprogress.findByIdAndUpdate(
-      { studentId: user?.authId },
-      { $set: payload },
-      {
-        new: true,
-        runValidators: true,
-      },
-    )
-      .populate('studentId')
-      .populate('examId')
-      .populate('bookmarks')
-
-    return result
-  }
-
-  const created = await Studyprogress.create(payload)
-
-  if (!created) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Requested studyprogress not found, please try again with valid id',
-    )
-  }
-
-  return created
-}
-
-const deleteStudyprogress = async (id: string): Promise<IStudyprogress> => {
-  if (!Types.ObjectId.isValid(id)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid Studyprogress ID')
-  }
-
-  const result = await Studyprogress.findByIdAndDelete(id)
-  if (!result) {
-    throw new ApiError(
-      StatusCodes.NOT_FOUND,
-      'Something went wrong while deleting studyprogress, please try again with valid id.',
-    )
-  }
-
-  return result
-}
-
-export const StudyprogressServices = {
-  createStudyprogress,
-  getAllStudyprogresss,
-  getSingleStudyprogress,
-  updateStudyprogress,
-  deleteStudyprogress,
+export const StudyProgressServices = {
+  startSession,
+  endSession,
+  completeQuestion,
+  addBookmark,
+  removeBookmark,
+  getBookmarks,
+  getStats,
+  getStudyProgress,
 }
