@@ -21,7 +21,6 @@ A concise, developer-friendly API reference for the My NCLEX Prep backend. Share
   - [Onboarding screens](#onboarding-screens)
   - [Study material](#study-material)
   - [Study schedule](#study-schedule)
-  - [Study progress](#study-progress)
   - [Notifications](#notifications)
   - [Review](#review)
   - [Public (FAQ / Contact)](#public-faq--contact)
@@ -683,70 +682,6 @@ Headers: `Authorization: Bearer <token>`
 
 ---
 
-### Study progress
-
-**POST** `/studyprogress/:studentId/:examId/session/start`
-
-Headers: `Authorization: Bearer <student-token>`, `Content-Type: application/json`
-
-Body:
-```json
-{ "startedAt": "2025-08-22T09:00:00.000Z" }
-```
-
----
-
-**POST** `/studyprogress/:studentId/:examId/session/end`
-
-Headers: `Authorization: Bearer <student-token>`, `Content-Type: application/json`
-
-Body:
-```json
-{ "endedAt": "2025-08-22T10:00:00.000Z" }
-```
-
----
-
-**POST** `/studyprogress/:studentId/:examId/question/:questionId/complete`
-
-Headers: `Authorization: Bearer <student-token>`, `Content-Type: application/json`
-
-Body:
-```json
-{ "result": "correct", "answer": "60-100" }
-```
-
----
-
-**GET** `/studyprogress/:studentId/:examId/bookmarks`
-
-Headers: `Authorization: Bearer <student-token>`
-
----
-
-**POST** `/studyprogress/:studentId/:examId/bookmark/:questionId`
-
-Headers: `Authorization: Bearer <student-token>`
-
----
-
-**DELETE** `/studyprogress/:studentId/:examId/bookmark/:questionId`
-
-Headers: `Authorization: Bearer <student-token>`
-
----
-
-**GET** `/studyprogress/:studentId/:examId/stats`
-
-Headers: `Authorization: Bearer <student-token>`
-
----
-
-**GET** `/studyprogress/:studentId/:examId`
-
-Headers: `Authorization: Bearer <student-token>`
-
----
 
 ### Notifications
 
@@ -1244,40 +1179,6 @@ PATCH /studyschedule/:id
 
 ---
 
-### Study progress
-
-POST /studyprogress/:studentId/:examId/session/start
-- Example full session structure (sessions array is used by validation)
-
-```json
-{
-  "studentId": "64b8a7e0f0a0000000000000",
-  "examId": "64b8a7e0f0a0000000000009",
-  "sessions": [
-    {
-      "startTime": "2025-08-22T09:00:00.000Z",
-      "endTime": "2025-08-22T10:00:00.000Z",
-      "durationMinutes": 60,
-      "topics": ["cardiology", "ecg"],
-      "string": "example",
-      "array": "example",
-      "Question": "Q1"
-    }
-  ],
-  "totalStudyTime": 60,
-  "lastStudied": "2025-08-22T10:00:00.000Z",
-  "bookmarks": ["64b8a7e0f0a000000000000a"],
-  "weakTopics": [ { "topic": "ecg", "accuracy": 50, "totalAttempts": 10 } ]
-}
-```
-
-POST /studyprogress/:studentId/:examId/question/:questionId/complete
-
-```json
-{ "result": "correct", "answer": "60-100" }
-```
-
----
 
 ### Notifications
 
