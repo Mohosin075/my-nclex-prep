@@ -26,6 +26,7 @@ A concise, developer-friendly API reference for the My NCLEX Prep backend. Share
   - [Review](#review)
   - [Public (FAQ / Contact)](#public-faq--contact)
   - [Support](#support)
+- [Full payload examples (required + optional fields)](#full-payload-examples-required--optional-fields)
 
 ---
 
@@ -892,9 +893,459 @@ Headers: `Authorization: Bearer <admin-token>`
 
 ---
 
-## Next steps
+## Full payload examples (required + optional fields)
 
-- I can convert these examples into a Postman collection and add it to the `postman/` folder so the frontend can import it directly.
-- I can expand each endpoint with expected success response examples by reading controllers.
+This section provides one complete request example per endpoint that includes both required and optional fields found in the repository's Zod validation schemas and models. Use these examples as canonical payloads for frontend forms and API calls.
 
-Tell me which you'd like next (Postman collection or response examples).
+Notes:
+- Fields labeled `required` in the schema are present. Optional fields are included with example values (you can omit them in real requests).
+- For multipart/form-data endpoints the examples show non-file fields as JSON; upload files in `image` or `doc` fields accordingly.
+
+### Auth
+
+POST /auth/signup
+- Required: email, password
+- Optional: name, phone, address, role
+
+```json
+{
+  "email": "jane@example.com",
+  "password": "password123",
+  "name": "Jane Doe",
+  "phone": "+1234567890",
+  "address": {
+    "city": "Dhaka",
+    "permanentAddress": "House 1, Road 2",
+    "presentAddress": "Flat 3B",
+    "country": "Bangladesh",
+    "postalCode": "1207"
+  },
+  "role": "student"
+}
+```
+
+POST /auth/login
+- Required: password and (email or phone) — both supported in schema
+
+```json
+{
+  "email": "jane@example.com",
+  "phone": "+1234567890",
+  "password": "password123",
+  "deviceToken": "device-token-optional"
+}
+```
+
+POST /auth/verify-account
+- Required: oneTimeCode and (email or phone)
+
+```json
+{ "email": "jane@example.com", "oneTimeCode": "123456" }
+```
+
+POST /auth/forget-password
+
+```json
+{ "email": "jane@example.com", "phone": "+1234567890" }
+```
+
+POST /auth/reset-password
+
+```json
+{ "newPassword": "newPass123", "confirmPassword": "newPass123" }
+```
+
+POST /auth/resend-otp
+
+```json
+{ "email": "jane@example.com", "phone": "+1234567890", "authType": "createAccount" }
+```
+
+POST /auth/change-password (protected)
+
+```json
+{ "currentPassword": "oldPass", "newPassword": "newPass123", "confirmPassword": "newPass123" }
+```
+
+DELETE /auth/delete-account (protected)
+
+```json
+{ "password": "currentPassword" }
+```
+
+POST /auth/refresh-token
+
+```json
+{ "refreshToken": "refresh-token-value" }
+```
+
+POST /auth/social-login
+
+```json
+{ "appId": "social-app-id", "deviceToken": "device-token" }
+```
+
+---
+
+### User
+
+GET /user/profile — no body
+
+PATCH /user/profile (multipart/form-data)
+- Optional fields shown below (schema allows many optional fields)
+
+Form-data (non-file fields shown as JSON):
+```json
+{
+  "name": "Jane Updated",
+  "phone": "+1234567890",
+  "address": {
+    "city": "Dhaka",
+    "permanentAddress": "House 1, Road 2",
+    "presentAddress": "Flat 3B",
+    "country": "Bangladesh",
+    "postalCode": "1207"
+  },
+  "image": ["https://example.com/profile1.png"]
+}
+```
+- `profile` image should be uploaded as file field when sending multipart/form-data.
+
+PATCH /user/:userId (admin)
+```json
+{
+  "status": "active"
+}
+```
+
+---
+
+### Category
+
+POST /category/ (admin) — multipart/form-data
+- Required: name
+- Optional: description, image
+
+Form-data fields (non-file as JSON):
+```json
+{
+  "name": "Cardiology",
+  "description": "Topics on heart",
+  "image": "https://s3.amazonaws.com/bucket/category-image.jpg"
+}
+```
+
+PATCH /category/:id (admin)
+```json
+{ "name": "Cardio Updated", "description": "Updated description", "image": "https://..." }
+```
+
+---
+
+### Community
+
+POST /community/ (auth)
+- Required: question
+- Optional: userId, avatarUrl, details, answers, answersCount, likesCount, tags, status
+
+```json
+{
+  "userId": "64b8a7e0f0a0000000000000",
+  "avatarUrl": "https://example.com/avatar.png",
+  "question": "How to interpret ECG?",
+  "details": "Short details about the case",
+  "answers": [
+    { "userId": "64b8a7e0f0a0000000000001", "date": "2025-08-22T10:00:00.000Z", "comments": "First answer" }
+  ],
+  "answersCount": 1,
+  "likesCount": 5,
+  "tags": ["cardiology", "ecg"],
+  "status": "open"
+}
+```
+
+POST /community/:communityId/answers
+- Required: comments
+
+```json
+{ "comments": "This is my detailed answer.", "userId": "64b8a7e0f0a0000000000001", "date": "2025-08-22T10:00:00.000Z" }
+```
+
+PATCH /community/:communityId/answers/:answerId
+
+```json
+{ "comments": "Updated answer text" }
+```
+
+---
+
+### Exam
+
+POST /exam/
+- Required: category (enum: "readiness" | "standalone")
+- Optional: name, code, description, isPublished, durationMinutes, passMark, stats, createdBy
+
+```json
+{
+  "category": "readiness",
+  "name": "Readiness Exam 1",
+  "code": "R-001",
+  "description": "Short description",
+  "isPublished": false,
+  "durationMinutes": 120,
+  "passMark": 50,
+  "stats": {
+    "questionCount": 50,
+    "attempts": 120,
+    "avgHighestScore": 80,
+    "avgScore": 65,
+    "lastAttemptAt": "2025-08-22T09:00:00.000Z"
+  },
+  "createdBy": "64b8a7e0f0a0000000000000"
+}
+```
+
+POST /exam/questions (admin)
+- Each question includes many optional properties from schema
+
+```json
+{
+  "questions": [
+    {
+      "type": "radio",
+      "stems": ["64b8a7e0f0a000000000000f"],
+      "questionText": "What is normal heart rate?",
+      "options": [
+        { "label": "50-60 bpm", "value": "50-60", "explanation": "Too slow", "mediaUrl": "https://..." },
+        { "label": "60-100 bpm", "value": "60-100" }
+      ],
+      "allowMultiple": false,
+      "numberAnswer": null,
+      "correctAnswer": 1,
+      "rearrangeItems": null,
+      "correctOrder": null,
+      "points": 1,
+      "tags": ["cardiology"],
+      "explanation": "Normal adult heart rate"
+    }
+  ]
+}
+```
+
+POST /exam/stems (multipart/form-data)
+- Example `stems` JSON string and `image` file(s)
+
+Form field `stems`:
+```json
+[
+  {
+    "stemTitle": "Case 1",
+    "stemDescription": "Patient with chest pain",
+    "stemPicture": null,
+    "table": [{ "key": "age", "value": 65, "type": "number" }]
+  }
+]
+```
+
+---
+
+### Lesson
+
+POST /lesson/ (admin)
+
+```json
+{
+  "category": "theory",
+  "name": "Lesson 1",
+  "code": "L-001",
+  "description": "Lesson description",
+  "isPublished": true,
+  "durationMinutes": 40,
+  "passMark": 40,
+  "stats": { "views": 100 }
+}
+```
+
+POST /lesson/questions — same shape as `/exam/questions` example.
+
+POST /lesson/stems — same pattern as `/exam/stems`.
+
+---
+
+### Mnemonic
+
+POST /mnemonic/ (admin)
+- Required: title, content
+
+```json
+{ "title": "ABC Rule", "content": "Airway, Breathing, Circulation" }
+```
+
+---
+
+### Onboarding screens
+
+POST /onboardingscreen/ (admin) — multipart/form-data
+- Required: title, description, imageURL (server may accept file upload and convert to URL)
+- Optional: order, actionText, skipEnabled, status
+
+Form-data (non-file fields shown as JSON):
+```json
+{
+  "title": "Welcome",
+  "description": "Welcome to the app",
+  "imageURL": "https://s3.amazonaws.com/bucket/onboard1.png",
+  "order": 1,
+  "actionText": "Get Started",
+  "skipEnabled": true,
+  "status": "active"
+}
+```
+
+---
+
+### Study material
+
+POST /studymaterial/ (admin) — multipart/form-data
+- Required: name, category
+- Optional: doc, size, Date, type, fileUrl, uploadedBy
+
+Form-data (non-file fields shown as JSON):
+```json
+{
+  "name": "NCLEX Guide",
+  "category": "guides",
+  "type": "pdf",
+  "size": "2MB",
+  "Date": "2025-08-22T00:00:00.000Z",
+  "fileUrl": "https://s3.amazonaws.com/bucket/guide.pdf",
+  "uploadedBy": "64b8a7e0f0a0000000000000"
+}
+```
+
+Upload the actual document file in the `doc` field.
+
+---
+
+### Study schedule
+
+POST /studyschedule/
+- Required: calendar (date string), title
+- Optional: description
+
+```json
+{ "calendar": "2025-09-01", "title": "Morning study", "description": "Chapters 1-3" }
+```
+
+PATCH /studyschedule/:id
+```json
+{ "calendar": "2025-09-02T09:00:00.000Z", "title": "Updated", "description": "Updated notes", "createdBy": "64b8a7..." }
+```
+
+---
+
+### Study progress
+
+POST /studyprogress/:studentId/:examId/session/start
+- Example full session structure (sessions array is used by validation)
+
+```json
+{
+  "studentId": "64b8a7e0f0a0000000000000",
+  "examId": "64b8a7e0f0a0000000000009",
+  "sessions": [
+    {
+      "startTime": "2025-08-22T09:00:00.000Z",
+      "endTime": "2025-08-22T10:00:00.000Z",
+      "durationMinutes": 60,
+      "topics": ["cardiology", "ecg"],
+      "string": "example",
+      "array": "example",
+      "Question": "Q1"
+    }
+  ],
+  "totalStudyTime": 60,
+  "lastStudied": "2025-08-22T10:00:00.000Z",
+  "bookmarks": ["64b8a7e0f0a000000000000a"],
+  "weakTopics": [ { "topic": "ecg", "accuracy": 50, "totalAttempts": 10 } ]
+}
+```
+
+POST /studyprogress/:studentId/:examId/question/:questionId/complete
+
+```json
+{ "result": "correct", "answer": "60-100" }
+```
+
+---
+
+### Notifications
+
+GET /notifications/ — no body (protected)
+
+GET /notifications/:id — no body (protected)
+
+GET /notifications/all — no body (protected)
+
+(Controller details determine notification shape; include typical fields when sending to frontend: id, title, body, read, createdAt)
+
+---
+
+### Review
+
+POST /review/
+- Required: rating, review
+- Optional: reviewee
+
+```json
+{ "reviewee": "64b8a7e0f0a0000000000000", "rating": 5, "review": "Excellent content" }
+```
+
+PATCH /review/:id
+```json
+{ "rating": 4, "review": "Updated review text" }
+```
+
+---
+
+### Public (FAQ / Contact)
+
+POST /public/
+```json
+{ "content": "Site privacy policy", "type": "privacy-policy" }
+```
+
+POST /public/contact
+```json
+{ "name": "John", "email": "john@example.com", "phone": "+1234567890", "country": "Bangladesh", "message": "Help with billing" }
+```
+
+POST /public/faq (admin)
+```json
+{ "question": "How to reset password?", "answer": "Use forget password flow" }
+```
+
+---
+
+### Support
+
+POST /support/
+- Required: message
+- Optional: userId, subject, status, attachments
+
+```json
+{ "userId": "64b8a7e0f0a0000000000000", "subject": "Payment failed", "message": "Payment failed while checking out", "status": "in_progress", "attachments": ["https://.../s1.png"] }
+```
+
+PATCH /support/:id
+```json
+{ "subject": "Payment failed - updated", "message": "Updated message", "status": "solved", "attachments": [] }
+```
+
+---
+
+If you'd like, I can now:
+1. Convert all of these examples into a Postman collection (imports ready) and save to `postman/`.
+2. Generate example success responses per endpoint (inferred from controllers) and append them below each request example.
+
+Which would you like next?
