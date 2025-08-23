@@ -11,6 +11,8 @@ router.get('/', MnemonicController.getAllMnemonics)
 
 router.get('/:id', MnemonicController.getSingleMnemonic)
 
+router.get('/category/:categoryId', MnemonicController.getMnemonicByCategoryId)
+
 router.post(
   '/',
   auth(USER_ROLES.ADMIN),
