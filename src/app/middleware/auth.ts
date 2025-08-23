@@ -25,7 +25,6 @@ const auth =
             config.jwt.jwt_secret as Secret,
           )
 
-
           // Set user to header
           req.user = verifyUser
 
@@ -39,9 +38,12 @@ const auth =
 
           next()
         } catch (error) {
-          console.log({error})
+          console.log({ error })
           if (error instanceof Error && error.name === 'TokenExpiredError') {
-            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Access Token has expired')
+            throw new ApiError(
+              StatusCodes.UNAUTHORIZED,
+              'Access Token has expired',
+            )
           }
           throw new ApiError(StatusCodes.FORBIDDEN, 'Invalid Access Token')
         }
@@ -52,8 +54,6 @@ const auth =
   }
 
 export default auth
-
-
 
 //this temp auth middleware is created for temporary user verification before creating a new user
 //in the future, we will use the auth middleware above
@@ -96,7 +96,10 @@ export const tempAuth =
           next()
         } catch (error) {
           if (error instanceof Error && error.name === 'TokenExpiredError') {
-            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Access Token has expired')
+            throw new ApiError(
+              StatusCodes.UNAUTHORIZED,
+              'Access Token has expired',
+            )
           }
           throw new ApiError(StatusCodes.FORBIDDEN, 'Invalid Access Token')
         }
